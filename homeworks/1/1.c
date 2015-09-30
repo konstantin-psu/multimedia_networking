@@ -4,12 +4,12 @@ int main ()
 {
 
     unsigned int low18Mask = 0x3FFFF;
-    unsigned int high14Mask = 0xFFFC0000;;
+    unsigned int high14Mask = 0x3FFF;
 
     unsigned int A = 0xFFFFFFFF;
     unsigned int B = 0xFFFFFFFF;
 
-    A = A & high14Mask;
+    A = ( A & high14Mask ) << 18;
     B = B & low18Mask;
     unsigned int C = A | B;
 
