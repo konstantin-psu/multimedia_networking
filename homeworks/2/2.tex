@@ -1,0 +1,298 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumerate}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{forest}
+\usepackage[shortlabels]{enumitem}
+     \setlist[enumerate, 1]{1\textsuperscript{o}}
+\lstset { %
+    language=C++,
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+}
+
+%\usetikzlibrary{automata,positioning}
+\usetikzlibrary{positioning,shapes,shadows,arrows,automata}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{(\hmwkClassInstructor\ \hmwkClassTime): \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#2}
+\newcommand{\hmwkDueDate}{September 30, 2015}
+\newcommand{\hmwkClass}{CS510 Intro to Multimedia Networking}
+\newcommand{\hmwkClassTime}{Fall 2015}
+\newcommand{\hmwkClassInstructor}{Wu-chi Feng}
+\newcommand{\hmwkAuthorName}{Konstantin Macarenco}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 2:00pm}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+\begin{homeworkProblem}
+
+Knowing distribution we can estimate approximate size of the encoded string.
+First we need to build encoding tree.
+
+\begin{forest}
+for tree={
+  draw,
+  minimum height=1cm,
+  anchor=north,
+  align=center,
+  grow=north,
+  child anchor=south
+},
+[{1}, tier=1
+    [{0.4}, tier=2, edge label={node[midway,below,font=\scriptsize]{1}} 
+        [{0.2}, tier=3,  edge label={node[midway,left,font=\scriptsize]{1}}
+            [{B, 0.10}, tier=4,  edge label={node[midway,left,font=\scriptsize]{1}}]
+            [{D, 0.10}, tier=4,  edge label={node[midway,left,font=\scriptsize]{0}}]
+        ]
+        [{A, 0.20}, tier=4, edge label={node[midway,left,font=\scriptsize]{0}} ]
+    ]
+    [{0.6}, tier=2, edge label={node[midway,below,font=\scriptsize]{0}} 
+        [{0.3}, tier=3, edge label={node[midway,auto,font=\scriptsize]{1}}
+            [{F, 0.15}, tier=4, edge label={node[midway,left,font=\scriptsize]{1}} ]
+            [{C, 0.15}, tier=4, edge label={node[midway,left,font=\scriptsize]{0}} ]
+        ]
+        [{E, 0.30}, tier=4, edge label={node[midway,auto,font=\scriptsize]{0}} ]
+    ]
+]
+% \node[anchor=west,align=left] 
+%   at ([xshift=-2cm]MS.west) {Level 3\\Criteria};
+% \node[anchor=west,align=left] 
+%   at ([xshift=-2cm]MS.west|-PDC) {Level 2\\ Group Criteria};
+% \node[anchor=west,align=left] 
+%   at ([xshift=-2cm]MS.west|-SS) {Level 1\\Overall Objective};
+\end{forest}
+
+\begin{itemize}
+\item A 10
+\item B 111
+\item C 010
+\item D 110
+\item E 00
+\item F 011
+\end{itemize}
+
+Considering a text that contains 100 characters, each character 8bits $100*8 = 800$ bits total.
+With Huffman compression we get $20*2 + 10*3 + 15 *3 + 10*3 + 30*2 + 15*3 = 250$ bits,
+we get compression ratio $3.2 : 1$
+
+However this calculation doesn't account for the size of encoding table.
+    
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+ 
+\begin{enumerate}[(a), leftmargin = 0.7cm, nosep]
+\item What is the maximum frame rate that we can achieve over this channel? \\
+   frame size = $640 \times 480 \ times 3 = 921600 $ bits\\
+   Bandwidth  = $11 \times 10^6 = 11000000$ bits\\
+   Maximum fps = $\cfrac{Bandwidth}{frame size} = \cfrac{11000000}{921600} \approx 11.93576$\\
+   \textbf{Answer: maximum frame rate $ \approx 11.93576$ fps }\\
+\item  What compression ratio would we need to achieve 30fps?
+    One frame size at 30 fps is $640 \times 480 \times 3 \times 30 = 27648000$ \\
+    To be able to transmit it over USB we have to compress it to $\cfrac{27648000}{11000000} \approx 2.514$ times.\\
+   \textbf{Answer: maximum frame rate $\approx 11.93576$ fps }\\
+\item  What is the maximum sized 4:3 aspect ratio video that can be captured over the
+USB channel?\\
+   Maximum px = $\cfrac{11000000}{30 \times 3} \approx 122222.222 $ \\
+   where $x \times y = 122222.222$ \text{ and } $\cfrac{4}{3} = \cfrac{x}{y},$ \\
+   Solving for : $x = \cfrac{4}{3}\times y$ \\
+   $\cfrac{4}{3}\times y \times y = 122222.222$ \\
+   $\cfrac{4}{3}\times y^2 = 122222.222$ \\
+   $y^2 = \cfrac{3}{4}\times 122222.222$ \\
+   $y^2 = \cfrac{3}{4}\times 122222.222$ \\
+   $y^2 = 91666.666$ \\
+   $y = \sqrt{91666.666}$ \\
+   $y \approx 302.765 $ \\
+   
+   And $x = \cfrac{302.765 * 4}{3}\ \approx 403.686$ \\
+   \textbf{Answer: Max sized aspect $\approx 403:302$ }\\
+\end{enumerate}
+    
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+
+A B C A C A B C B A B
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+     w    &   k   &   dictionary entries & output     \\ \hline
+          &   A   &                      &            \\ \hline
+     A    &   B   &    $<256>$ AB        & A          \\ \hline
+     B    &   C   &    $<257>$ BC        & B          \\ \hline
+     C    &   A   &    $<258>$ CA        & C          \\ \hline
+     A    &   C   &    $<259>$ AC        & A          \\ \hline
+     C    &   A   &    exists            &            \\ \hline
+     CA   &   B   &    $<260> $ CAB      & $<258>$    \\ \hline
+     B    &   C   &    exists            &            \\ \hline
+     BC   &   B   &    $<261>$  BCB      & $<257>$    \\ \hline
+     B    &   A   &    $<262>$  BA       &  B         \\ \hline
+     A    &   B   &    exists            &            \\ \hline
+     AB   &       &                      &  AB        \\ \hline
+    \end{tabular}
+\end{table}
+
+    
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+
+Decompress: \\ 
+F A B \_ L $<257>$ \_ C $<261>$ $<264>$ T $<257>$
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+     w    &   k         & entry  &   dictionary         & output     \\ \hline
+     F    &   F         &  F     &                      &  F         \\ \hline
+     F    &   A         &  A     &   $<256>$ FA         &  A         \\ \hline
+     A    &   B         &  B     &   $<257>$ AB         &  B         \\ \hline
+     B    &  \_         & \_     &   $<258>$ B\_        &  \_        \\ \hline
+    \_    &   L         &  L     &   $<259>$ \_L        &  L         \\ \hline
+     L    & $<257>$     & AB     &   $<260>$ LA         &  AB        \\ \hline
+    AB    &  \_         & \_     &   $<261>$ AB\_       &  \_        \\ \hline
+    \_    &   C         &  C     &   $<262>$ \_L        &  C         \\ \hline
+     C    & $<261>$     & AB\_   &   $<263>$ CA         &  AB\_      \\ \hline
+    AB\_  & $<264>$     & AB\_A  &   $<264>$ AB\_A      &  AB\_A     \\ \hline
+  AB\_A   &   T         &  T     &   $<265>$ AB\_AT     &  T         \\ \hline
+     T    & $<257>$     & AB     &   $<266>$ TA         &  AB        \\ \hline
+    \end{tabular}
+\end{table}
+   
+FAB\_LAB\_CAB\_AB\_ATAB 
+\end{homeworkProblem}
+
+\end{document}
