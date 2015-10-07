@@ -100,7 +100,7 @@
 %
 
 \newcommand{\hmwkTitle}{Homework\ \#2}
-\newcommand{\hmwkDueDate}{September 30, 2015}
+\newcommand{\hmwkDueDate}{October 7, 2015}
 \newcommand{\hmwkClass}{CS510 Intro to Multimedia Networking}
 \newcommand{\hmwkClassTime}{Fall 2015}
 \newcommand{\hmwkClassInstructor}{Wu-chi Feng}
@@ -113,7 +113,7 @@
 \title{
     \vspace{2in}
     \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
-    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 2:00pm}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 8:00am}\\
     \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
     \vspace{3in}
 }
@@ -155,9 +155,13 @@
 \pagebreak
 
 \begin{homeworkProblem}
+Suppose we are using Huffman Compression on the following symbols and their
+probabilities. What is the expected compression ratio (for a randomly generated
+sequence with the same probabilities), assuming that the original symbols are 8-bits
+in length.\\
 
-Knowing distribution we can estimate approximate size of the encoded string.
-First we need to build encoding tree.
+Knowing the distribution we can estimate an approximate size of encoded string.
+First we need to build the encoding tree.
 
 \begin{forest}
 for tree={
@@ -201,29 +205,31 @@ for tree={
 \item F 011
 \end{itemize}
 
-Considering a text that contains 100 characters, each character 8bits $100*8 = 800$ bits total.
+Considering a random text that contains 100 characters, each character 8bits $100*8 = 800$ bits in total.
 With Huffman compression we get $20*2 + 10*3 + 15 *3 + 10*3 + 30*2 + 15*3 = 250$ bits,
-we get compression ratio $3.2 : 1$
+so compression ratio \textbf{$3.2 : 1$}, or around 70\%.
 
 However this calculation doesn't account for the size of encoding table.
     
 \end{homeworkProblem}
 
 \begin{homeworkProblem}
- 
+USB1 bandwidth is approximately 11 megabits per second. Suppose we have a
+camera that we have attached to our computer that is capable of capturing 640x480
+pixel video at 30 fps.  \\
 \begin{enumerate}[(a), leftmargin = 0.7cm, nosep]
 \item What is the maximum frame rate that we can achieve over this channel? \\
-   frame size = $640 \times 480 \ times 3 = 921600 $ bits\\
+   frame size = $640 \times 480 \times 3 = 921600 $ bits\\
    Bandwidth  = $11 \times 10^6 = 11000000$ bits\\
    Maximum fps = $\cfrac{Bandwidth}{frame size} = \cfrac{11000000}{921600} \approx 11.93576$\\
    \textbf{Answer: maximum frame rate $ \approx 11.93576$ fps }\\
-\item  What compression ratio would we need to achieve 30fps?
+\item  What compression ratio would we need to achieve 30fps? \\
     One frame size at 30 fps is $640 \times 480 \times 3 \times 30 = 27648000$ \\
     To be able to transmit it over USB we have to compress it to $\cfrac{27648000}{11000000} \approx 2.514$ times.\\
-   \textbf{Answer: maximum frame rate $\approx 11.93576$ fps }\\
+   \textbf{Answer: 2.514 times}\\
 \item  What is the maximum sized 4:3 aspect ratio video that can be captured over the
 USB channel?\\
-   Maximum px = $\cfrac{11000000}{30 \times 3} \approx 122222.222 $ \\
+   Maximum number of pixels we can translate over the given USB = $\cfrac{11000000}{30 \times 3} \approx 122222.222 $ \\
    where $x \times y = 122222.222$ \text{ and } $\cfrac{4}{3} = \cfrac{x}{y},$ \\
    Solving for : $x = \cfrac{4}{3}\times y$ \\
    $\cfrac{4}{3}\times y \times y = 122222.222$ \\
@@ -292,7 +298,7 @@ F A B \_ L $<257>$ \_ C $<261>$ $<264>$ T $<257>$
     \end{tabular}
 \end{table}
    
-FAB\_LAB\_CAB\_AB\_ATAB 
+\textbf{Output string: FAB\_LAB\_CAB\_AB\_ATAB }
 \end{homeworkProblem}
 
 \end{document}
