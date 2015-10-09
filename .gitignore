@@ -87,4 +87,9 @@ Makefile
 app_exe
 *.swp
 *.log
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
 
