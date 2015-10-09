@@ -1,0 +1,5 @@
+#!/bin/bash
+diff Test1.inputa.huff Test1.inputa.txt.huff.orig 
+diff Test1.inputb.huff Test1.inputb.txt.huff.orig 
+diff Test1.inputc.huff Test1.inputc.txt.huff.orig 
+diff Test2.input.huff Test2.input.txt.huff.orig 

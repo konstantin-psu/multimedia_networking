@@ -1,137 +1,163 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
 
-#define MSIZE 512
+#define MSIZE 512 //should be enough under assumption, that we are encoding ASCII table.
 
+//Symbol representation
 struct symbol {
-    unsigned int code;
     int size;
-    char * codeChar;
+    char * codeChar; //Symbol string, and it's size.
 };
 
-int read_table(char * location, struct symbol * table, int size) {
-    char * line = NULL;
-    size_t lsize = 0;
-    int code = 0;
-//    int count = 0;
-    int lineSize = 0;
-    int position = 0;
+struct encoded {
+    char * rawLine; //To hold concatenated "encoded" input as string.
+    char * encodedLine; //Convert to array of 8 bit entries
+    int size;
+};
 
-    FILE * p = fopen(location, "r");
-    if (p == NULL) {
-        printf("Failed to open %s\n", location);
+
+int read_table(char * location, struct symbol * table, int size);  //Parse table assuming that input will be a character in ASCII format
+void encode(struct symbol * table, char * in, char * out);         //Parse input file and convert to binary
+void convert_and_write(struct encoded code, char * outfile);       //Convert encoded table to binary and write to the given output file
+void init_array(char * arr, int size, char * argv[], int ind); //Initialize and save arguments
+
+int main(int argc, char * argv[]) {
+    // Enforce four arguments
+    if (argc != 4) {
+        printf("Usage: huffman Table InFile OutFile");
+        exit(1);
     }
 
-    while((lineSize = getline(&line, &lsize, p)) != -1) {
-        int i = 0;
-        for (i = 0; i< lineSize; i++ ) {
-            if (line[i] == 32) {
+    char tableLocation [MSIZE]; //Table file location
+    char inFileLocation [MSIZE]; //Input file location
+    char outFileLocation [MSIZE]; //Out (encoded) file loation.
 
-                line[i] = 0;
-                position = atoi(line);
-                code = strtol(line+i+1, NULL, 2);
-                table[position].code = code;
-                table[position].size = strlen(line+i+1) - 1;
-                table[position].codeChar = (char *) calloc(table[position].size+1, sizeof(char));
-                strncpy(table[position].codeChar, line+i+1, table[position].size);
-            }
-        }
+    struct symbol table[MSIZE]; //Table of symbols
+    memset(table, 0, MSIZE);
 
-    }
+    init_array(tableLocation, MSIZE, argv, 1);
+    init_array(inFileLocation, MSIZE, argv, 2);
+    init_array(outFileLocation, MSIZE, argv, 3);
+
+    read_table(tableLocation, table, MSIZE);
+    encode(table, inFileLocation, outFileLocation);
     return 0;
 }
 
-void encode(struct symbol * table, char * in, char * out)  {
-    char * line = NULL;
-    size_t lsize = 0;
-//    struct symbol * encoded = NULL;
-//    int code = 0;
-    unsigned int count = 0;
-    int bits_left = 32;
-    int lineSize = 0;
-//    uint32_t num = 4386;
-    uint32_t b0,b1,b2,b3;
-    uint32_t res;
-//    int bits_taken = 0;
-//    int position = 0;
-    unsigned int encoded [MSIZE];
-    memset(encoded, 0, MSIZE);
 
-    FILE * p = fopen(in, "r");
+/***
+ * Idea is to read Huffman table, and put it into array.
+ * Each table entry is a letter number (In ASCII) in range [0 - 256], followed by binary represented by a string, with arbitrary length <= 32;
+ *
+ * To avoid searching the table each, when parsing input file, use letter number as index into array of symbols.
+***/
+
+int read_table(char * location, struct symbol * table, int size) {
+
+
+    char * line = NULL; // Read line
+    size_t lsize = 0;   // Placeholder for getline size;
+    int lineSize = 0;   // Holder for actual line size
+    int position = 0;   // Position holder for letter number.
+
+    FILE * p = fopen(location, "r"); // Open file with reading permission
     if (p == NULL) {
-        printf("Failed to open %s\n", in);
+        printf("Failed to open %s\n", location);
+        exit(1);
     }
 
     while((lineSize = getline(&line, &lsize, p)) != -1) {
         int i = 0;
         for (i = 0; i< lineSize; i++ ) {
+            if (line[i] == 32) { // Search for space
+
+                line[i] = 0;     // Split line, Now we have to strings in the same array [index] [encoded string]
+                position = atoi(line); // Convert position into integer.
+                table[position].size = strlen(line+i+1) - 1; // Set size to the size of [encoded string]
+                table[position].codeChar = (char *) calloc(table[position].size+1, sizeof(char)); // save encoded string into symbol
+                strncpy(table[position].codeChar, line+i+1, table[position].size);
+                break;
+            }
+        }
+
+    }
+    fclose(p);
+    return 0;
+}
+
+
+
+/*
+ *  Read Input file char by char, encode each char into corresponding entry from Huffman table
+ *
+ *  Save.
+ */
+void encode(struct symbol * table, char * in, char * out)  {
+
+    char * line = NULL; // Getline line holder
+    size_t lsize = 0;   // getline size holder
+    int lineSize = 0;
+    struct encoded encodedLine; // Encoded table
+    encodedLine.size = 0; // Reset
+    encodedLine.rawLine = (char *) calloc(5000, sizeof(char)); // 5000 should be enough to accommodate all possible entries
+
+    FILE * p = fopen(in, "r"); // Try to open file
+    if (p == NULL) {
+        printf("Failed to open %s\n", in);
+        exit(1);
+    }
+
+    while((lineSize = getline(&line, &lsize, p)) != -1) {
+        int i = 0;
+        for (i = 0; i< lineSize; i++ ) { // Read each line and append to RawLine in encoded struct
             unsigned int current_index = line[i];
             struct symbol csymb = table[current_index];
-            unsigned int symb = csymb.code;
-            if (bits_left >= csymb.size) {
-                bits_left -= csymb.size;
-                symb = symb << (bits_left);
+            strcat(encodedLine.rawLine, csymb.codeChar);
+            encodedLine.size += csymb.size;
+        }
+    }
+    fclose(p);
 
-                b0 = (symb & 0x000000ff) << 24u;
-                b1 = (symb & 0x0000ff00) << 8u;
-                b2 = (symb & 0x00ff0000) >> 8u;
-                b3 = (symb & 0xff000000) >> 24u;
+    convert_and_write(encodedLine, out);
+    return;
 
-                res = b0 | b1 | b2 | b3;
-                encoded[count]=encoded[count] | res;
-            } else {
-                bits_left = csymb.size - bits_left;
-                symb = symb >> (bits_left);
-                encoded[count]=encoded[count] | symb;
-                bits_left = 32 - bits_left;
-                count++;
-                symb = csymb.code << bits_left;
+}
 
-                b0 = (symb & 0x000000ff) << 24u;
-                b1 = (symb & 0x0000ff00) << 8u;
-                b2 = (symb & 0x00ff0000) >> 8u;
-                b3 = (symb & 0xff000000) >> 24u;
+void copy8(char * dest, char * source) { // Copy only 8 characters
+    int i = 0;
+    for (i = 0; i< 8; i++) {
+        dest[i] = source[i];
+    }
+}
+void convert_and_write(struct encoded code, char * outfile) {
+    int i = 0;
 
-                res = b0 | b1 | b2 | b3;
+    char tempStorage [9]; // To hold current value 8 - bit + 1 for null terminator
+    memset(tempStorage, 0, 9); // reset
+    code.encodedLine = (char *) calloc(5000, sizeof(char));
+    int encodedIndex = 0; // Keep track of current entry in the encoded line
 
-                encoded[count]=encoded[count] | res;
+    for (i = 0; i < code.size; i++) {
+        if (i%8==0) { // Convert to binary every eight characters
+            copy8(tempStorage, code.rawLine + i); // Copy current 8 characters to tempStorage
+            int last = code.size - i; // Make sure we have enough characters to fill the tempStorage
+            if (last < 8) { //if not set all unused spaces to '0'
+                for (;last < 8;last++) {
+                    tempStorage[last] = '0';
+                }
             }
+            char code1 = strtol(tempStorage, NULL, 2); // Convert string to int, with base = 2, i.e "1001" = 9, char is enough to hold it, since
+                                                       // We convert only 8 character at a time, which won't exceed 1 byte after conversion
+            code.encodedLine[encodedIndex] = code1;    // Save converted character into encoded line
+            encodedIndex++;
         }
     }
 
 
-    char tempLoc[MSIZE];
-    char * t = "/home/kmacarenco/gitHubRepos/PSU/multimedia_networking/programming_assignments/1";
-    memset(tempLoc, 0, MSIZE);
-    strcat(tempLoc, t);
-    strcat(tempLoc, "/bintest");
-
-    FILE * write_ptr = fopen(tempLoc,"wb");  // w for write, b for binary
-
-
-    int code = strtol("00010010001101000001001000110100", NULL, 2);
-    printf("%x\n",0x12);
-
-    printf("%d", code);
-
-//    int temp[10];
-    char temp[] = "\x12\x34\x12\x34\x12\x39\x12\x34\x12\x34\x12\x39\x12\x34\x12\x34\x12\x39\x12\x34\x12\x34\x12\x39\x12\x34\x12\x34\x12\x39\x12\x34\x12\x34\x12\x39\x12\x34\x12\x34\x12\x39";
-//    memset(temp, 0, 10);
-    b0 = (code & 0x000000ff) << 24u;
-    b1 = (code & 0x0000ff00) << 8u;
-    b2 = (code & 0x00ff0000) >> 8u;
-    b3 = (code & 0xff000000) >> 24u;
-
-    res = b0 | b1 | b2 | b3;
-//    temp[1]=56;
-
-//    fwrite(encode, (count+1)*2,1,write_ptr);
-    fwrite(temp, sizeof(temp),1,write_ptr);
+    FILE * write_ptr = fopen(outfile,"wb");  // w for write, b for binary
+    fwrite(code.encodedLine, encodedIndex,1,write_ptr);  // save
     fclose(write_ptr);
-    return;
-
 }
 
 void init_array(char * arr, int size, char * argv[], int ind) {
@@ -140,31 +166,4 @@ void init_array(char * arr, int size, char * argv[], int ind) {
     strcat(arr, t);
     strcat(arr, "/");
     strcat(arr, argv[ind]);
-
-}
-
-int main(int argc, char * argv[]) {
-    if (argc != 4) {
-        printf("Usage: huffman Table InFile OutFile");
-        exit(1);
-    }
-    char tableLocation [MSIZE];
-    char inFileLocation [MSIZE];
-    char outFileLocation [MSIZE];
-
-    struct symbol table[MSIZE];
-    memset(table, 0, MSIZE);
-
-    init_array(tableLocation, MSIZE, argv, 1);
-    init_array(inFileLocation, MSIZE, argv, 2);
-    init_array(outFileLocation, MSIZE, argv, 3);
-
-    printf("%s\n", tableLocation);
-    printf("%s\n", inFileLocation);
-    printf("%s\n", outFileLocation);
-
-
-    read_table(tableLocation, table, MSIZE);
-    encode(table, inFileLocation, outFileLocation);
-    return 0;
 }
