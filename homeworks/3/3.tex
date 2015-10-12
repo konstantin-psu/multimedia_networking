@@ -159,9 +159,11 @@ Suppose we have the ideal stereo audio signal of 16-bit samples and a sampling r
 of 44,100 Hz. Further, suppose we have a process that converts this data into the ulaw
 format. What is the effective compression ratio of this process?
 
-Bit-rate of given audio is $44100 \times 16 \times 2 =1411200$ Bits/second.\\
+\begin{enumerate}[Solution, leftmargin = 1.5cm ]
+\item Bit-rate of given audio is $44100 \times 16 \times 2 =1411200$ Bits/second.\\
 Ulaw bit-rate is $8 \times 1000 \times 8 = 64000$ Bits/second.\\
 Compression ratio is $\cfrac{1411200}{64000} = 22.05$\\
+\end{enumerate}
 
 \textbf{Answer: 22.05 : 1} 
 \end{homeworkProblem}
@@ -170,7 +172,7 @@ Compression ratio is $\cfrac{1411200}{64000} = 22.05$\\
 How does one generate blue using CMY filters? \\ 
 
 To generate blue we need to apply C and M filters to remove Green and Red.\\
-\includegraphics[width = 400, keepaspectratio]{cmy}
+\includegraphics[width = 400px, keepaspectratio]{cmy}
 \end{homeworkProblem}
 
 \begin{homeworkProblem}
@@ -182,6 +184,7 @@ that is an index to a color tuple (e.g., how GIF represents images).
 the image using straight tuples? \\
 
 To represent 24MP image, using 24 bit RGB values we need $ 6000 \times 4000 \times 3 \times 24 =  576000000$ Bits \\
+\pagebreak
 
 \item Suppose we have a color table representation, where the index points to the color
 value (remember, the color table needs to store the actual RGB values). What is the
