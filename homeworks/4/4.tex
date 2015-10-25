@@ -99,8 +99,8 @@
 %   - Author
 %
 
-\newcommand{\hmwkTitle}{Homework\ \#3}
-\newcommand{\hmwkDueDate}{October 12, 2015}
+\newcommand{\hmwkTitle}{Homework\ \#4}
+\newcommand{\hmwkDueDate}{October 28, 2015}
 \newcommand{\hmwkClass}{CS510 Intro to Multimedia Networking}
 \newcommand{\hmwkClassTime}{Fall 2015}
 \newcommand{\hmwkClassInstructor}{Wu-chi Feng}
@@ -154,62 +154,42 @@
 
 \pagebreak
 
+%\begin{enumerate}[(a), leftmargin = 0.7cm, nosep]
 \begin{homeworkProblem}
-Suppose we have the ideal stereo audio signal of 16-bit samples and a sampling rate
-of 44,100 Hz. Further, suppose we have a process that converts this data into the ulaw
-format. What is the effective compression ratio of this process?
 
-\begin{enumerate}[Solution, leftmargin = 1.5cm ]
-\item Bit-rate of given audio is $44100 \times 16 \times 2 =1411200$ Bits/second.\\
-Ulaw bit-rate is $8 \times 1000 \times 8 = 64000$ Bits/second.\\
-Compression ratio is $\cfrac{1411200}{64000} = 22.05$\\
+What are four main differences between GIF and PNG?
+\begin{enumerate}[1), leftmargin = 0.9cm, nosep]
+\item Color Pallet. GIF uses only 256 colors pallet, when JPEG is full color (24 bit)
+\item Encoding. GIF uses rather simplistic encoding, like LZW, when creating JPEG images is fairly complicated.
+\item Purpose - GIF great for images that use small set of colors for example logo.
+\item Tunable compression rate. JPEG images quality can be adjusted, whereas GIF cannot.
 \end{enumerate}
 
-\textbf{Answer: 22.05 : 1} 
 \end{homeworkProblem}
 
 \begin{homeworkProblem}
-How does one generate blue using CMY filters? \\ 
 
-To generate blue we need to apply C and M filters to remove Green and Red.\\
-\includegraphics[width = 400px, keepaspectratio]{cmy}
+Why is zig-zag reordering used in JPEG compression?
+
 \end{homeworkProblem}
 
 \begin{homeworkProblem}
-Suppose we have a 24 MP image (6000x4000). We would like to compare the
-storage requirement for tuples (e.g., straight RGB storage) versus a single number
-that is an index to a color tuple (e.g., how GIF represents images).
-\begin{enumerate}[(a), leftmargin = 0.7cm, nosep]
-\item Assuming 24-bit RGB values, how much memory would be required to represent
-the image using straight tuples? \\
 
-To represent 24MP image, using 24 bit RGB values we need $ 6000 \times 4000 \times 3 \times 24 =  576000000$ Bits \\
-\pagebreak
+What are the entropy encoding techniques employed in JPEG
 
-\item Suppose we have a color table representation, where the index points to the color
-value (remember, the color table needs to store the actual RGB values). What is the
-total memory needed to represent the color table and represent the image, if the index
-is 8-bits? 12-bits? 16-bits? and 20 bits? There is one answer for each. \\
+\end{homeworkProblem}
+\begin{homeworkProblem}
 
-Total memory for 8  bits = $ 256 * 8 * 24 =      49152     +  6000 * 4000 * 8  =      49152       +    192000000= 192049152 $  Bits \\
-Total memory for 12 bits  = $ 4096 * 12 * 24 =    1179648   +  6000 * 4000 * 12 =      1179648     +    288000000= 289179648 $ Bits \\
-Total memory for 16 bits  = $ 65536 * 16 * 24 =   25165824  +  6000 * 4000 * 16 =      25165824    +    384000000= 409165824 $ Bits \\
-Total memory for 20 bits  = $ 1048576 * 20 * 24 = 503316480 +  6000 * 4000 * 20 =      503316480   +    480000000= 983316480 $ Bits \\
+what is the main difference between how the macroblocks are encoded in h.261 versus MPEG-1
 
+\end{homeworkProblem}
+\begin{homeworkProblem}
+Suppose we have a set of frames (number 1 ... n) that we would like to compress
+into MPEG-1 with the following frame types:\\
+$I_0\text{ }B_1\text{ }B_2\text{ }I_3\text{ }P_4\text{ }B_5\text{ }P_6\text{ }I_7\text{ }B_8\text{ }B_9\text{ }I_{10}\text{ }I_{11}\text{ }B_{12}\text{ }B_{13}\text{ }P_{14}\text{ }P_{15}\text{ }P_{16}\text{ }I_{17}$\\
+Assuming, they all fit into one group of pictures (GOP), what order do these
+frames appear in the compressed stream?
 
-\item For the 8, 12, 16, and 20-bit indexes above, what is the maximum number of
-colors that can be represented.\\
-
-For 8  bits  = $ 2^8 = 256      $ Colors\\
-For 12 bits  = $ 2^{12} = 4096   $ Colors\\
-For 16 bits  = $ 2^{16} = 65536  $ Colors\\
-For 20 bits  = $ 2^{20} = 1048576  $ Colors\\
-
-
-
-
-
-\end{enumerate}
 \end{homeworkProblem}
 
 \end{document}
