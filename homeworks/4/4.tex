@@ -171,24 +171,34 @@ What are four main differences between GIF and PNG?
 
 Why is zig-zag reordering used in JPEG compression?
 
+Resulting matrix after quantization tend to contain most of the coefficients clustered together in the upper left corner.
+Zig-zag reordering helps to keep most of the zero coefficients together.
+
 \end{homeworkProblem}
 
 \begin{homeworkProblem}
 
-What are the entropy encoding techniques employed in JPEG
+What are the entropy encoding techniques employed in JPEG? \\
+
+JPEG uses all encodings studied so far: run length (RLE), Huffman, LZW, zig-zag reordering.
 
 \end{homeworkProblem}
 \begin{homeworkProblem}
 
-what is the main difference between how the macroblocks are encoded in h.261 versus MPEG-1
+What is the main difference between how the macroblocks are encoded in h.261 versus MPEG-1? \\
+
+The main difference is that MPEG-1 in addition to I and P frames can contain B frames - motion based bidirectional predictive coding frame, which uses
+both past reference frames and future reference frames, which allows higher compression rate.
 
 \end{homeworkProblem}
 \begin{homeworkProblem}
-Suppose we have a set of frames (number 1 ... n) that we would like to compress
-into MPEG-1 with the following frame types:\\
+Suppose we have a set of frames (number 1 ... n) that we would like to compress into MPEG-1 with the following frame types:\\
 $I_0\text{ }B_1\text{ }B_2\text{ }I_3\text{ }P_4\text{ }B_5\text{ }P_6\text{ }I_7\text{ }B_8\text{ }B_9\text{ }I_{10}\text{ }I_{11}\text{ }B_{12}\text{ }B_{13}\text{ }P_{14}\text{ }P_{15}\text{ }P_{16}\text{ }I_{17}$\\
-Assuming, they all fit into one group of pictures (GOP), what order do these
-frames appear in the compressed stream?
+Assuming, they all fit into one group of pictures (GOP), what order do these frames appear in the compressed stream?\\
+
+Frames should be reordered so each frame that depends on another frame should appear after it in the compressed file.
+
+$I_0\text{ }I_3\text{ }B_1\text{ }B_2\text{ }P_4\text{ }P_6\text{ }B_5\text{ }I_7\text{ }I_{10}\text{ }B_8\text{ }B_9\text{ }I_{11}\text{ }P_{14}\text{ }B_{12}\text{ }B_{13}\text{ }P_{15}\text{ }P_{16}\text{ }I_{17}$\\
 
 \end{homeworkProblem}
 
