@@ -160,8 +160,9 @@
 What are four main differences between GIF and PNG?
 \begin{enumerate}[1), leftmargin = 0.9cm, nosep]
 \item Color Pallet. GIF uses only 256 colors pallet, when JPEG is full color (24 bit)
-\item Encoding. GIF uses rather simplistic encoding, like LZW, when creating JPEG images is fairly complicated.
-\item Purpose - GIF great for images that use small set of colors for example logo.
+\item Encoding. GIF encoded with LZW, when JPEG uses series of transformations, such as DCT transform and only then entropy encoding (LZW, RLE, Huffman, Zig-zag reordering).
+\item Use - GIF great on images that use small set of colors for example logo, and JPEG is better for pictures 
+    that have wide range of colors.
 \item Tunable compression rate. JPEG images quality can be adjusted, whereas GIF cannot.
 \end{enumerate}
 
@@ -169,7 +170,7 @@ What are four main differences between GIF and PNG?
 
 \begin{homeworkProblem}
 
-Why is zig-zag reordering used in JPEG compression?
+Why is zig-zag reordering used in JPEG compression?\\
 
 Resulting matrix after quantization tend to contain most of the coefficients clustered together in the upper left corner.
 Zig-zag reordering helps to keep most of the zero coefficients together.
@@ -180,14 +181,14 @@ Zig-zag reordering helps to keep most of the zero coefficients together.
 
 What are the entropy encoding techniques employed in JPEG? \\
 
-JPEG uses all encodings studied so far: run length (RLE), Huffman, LZW, zig-zag reordering.
+JPEG uses all encodings studied so far: run length (RLE), Huffman, LZW and zig-zag reordering.
 
 \end{homeworkProblem}
 \begin{homeworkProblem}
 
 What is the main difference between how the macroblocks are encoded in h.261 versus MPEG-1? \\
 
-The main difference is that MPEG-1 in addition to I and P frames can contain B frames - motion based bidirectional predictive coding frame, which uses
+The main difference is that MPEG-1 macroblock type in addition to I and P frames can contain B frame - motion based bidirectional predictive coding frame, which uses
 both past reference frames and future reference frames, which allows higher compression rate.
 
 \end{homeworkProblem}
