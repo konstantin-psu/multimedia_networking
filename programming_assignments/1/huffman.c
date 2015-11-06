@@ -56,7 +56,8 @@ int main(int argc, char * argv[]) {
 int read_table(char * location, struct symbol * table, int size) {
 
 
-    char * line = NULL; // Read line
+    char line [100]; // Read line
+    memset(line,0,100);
     size_t lsize = 0;   // Placeholder for getline size;
     int lineSize = 0;   // Holder for actual line size
     int position = 0;   // Position holder for letter number.
@@ -67,9 +68,9 @@ int read_table(char * location, struct symbol * table, int size) {
         exit(1);
     }
 
-    while((lineSize = getline(&line, &lsize, p)) != -1) {
+    while(fgets(line, 100, p) != NULL) {
         int i = 0;
-        for (i = 0; i< lineSize; i++ ) {
+        for (i = 0; i< 100; i++ ) {
             if (line[i] == 32) { // Search for space
 
                 line[i] = 0;     // Split line, Now we have to strings in the same array [index] [encoded string]
@@ -95,7 +96,8 @@ int read_table(char * location, struct symbol * table, int size) {
  */
 void encode(struct symbol * table, char * in, char * out)  {
 
-    char * line = NULL; // Getline line holder
+    char line [5000]; // Getline line holder
+    memset(line,0,5000);
     size_t lsize = 0;   // getline size holder
     int lineSize = 0;
     struct encoded encodedLine; // Encoded table
@@ -108,9 +110,10 @@ void encode(struct symbol * table, char * in, char * out)  {
         exit(1);
     }
 
-    while((lineSize = getline(&line, &lsize, p)) != -1) {
+    while(fgets(line, 5000, p) != NULL) {
         int i = 0;
-        for (i = 0; i< lineSize; i++ ) { // Read each line and append to RawLine in encoded struct
+        for (i = 0; i< 5000; i++ ) { // Read each line and append to RawLine in encoded struct
+            if (line[i] == 0) break;
             unsigned int current_index = line[i];
             struct symbol csymb = table[current_index];
             strcat(encodedLine.rawLine, csymb.codeChar);
@@ -161,9 +164,9 @@ void convert_and_write(struct encoded code, char * outfile) {
 }
 
 void init_array(char * arr, int size, char * argv[], int ind) {
-    char * t = "/home/kmacarenco/gitHubRepos/PSU/multimedia_networking/programming_assignments/1";
+    //char * t = "/home/kmacarenco/gitHubRepos/PSU/multimedia_networking/programming_assignments/1";
     memset(arr, 0, size);
-    strcat(arr, t);
-    strcat(arr, "/");
+    //strcat(arr, argv[0]);
+    //strcat(arr, "/");
     strcat(arr, argv[ind]);
 }

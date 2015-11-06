@@ -1,2 +1,2 @@
 #!/bin/bash
-pdflatex 3.tex
+pdflatex 3.tex > /dev/null

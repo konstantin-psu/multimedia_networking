@@ -1,5 +1,5 @@
 #!/bin/bash
-./app_exe Test1.Huff.txt Test1.inputa.txt Test1.inputa.huff
-./app_exe Test1.Huff.txt Test1.inputb.txt Test1.inputb.huff
-./app_exe Test1.Huff.txt Test1.inputc.txt Test1.inputc.huff
-./app_exe Test2.Huff.txt Test2.input.txt Test2.input.huff
+./huffman Test1.Huff.txt Test1.inputa.txt Test1.inputa.huff
+./huffman Test1.Huff.txt Test1.inputb.txt Test1.inputb.huff
+./huffman Test1.Huff.txt Test1.inputc.txt Test1.inputc.huff
+./huffman Test2.Huff.txt Test2.input.txt  Test2.input.huff
