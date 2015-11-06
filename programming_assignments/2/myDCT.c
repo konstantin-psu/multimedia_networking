@@ -2,6 +2,17 @@
 #include <string.h>
 #include <stdlib.h>
 
+struct block {
+    unsigned char items [8][8];
+    int offsetX;
+    int offsetY;
+};
+
+struct macroBlock {
+    struct block blocks [2][2] ;
+    int offsetX;
+    int offsetY;
+};
 
 struct pgmEncoded {
     int xDim;
@@ -13,15 +24,12 @@ struct pgmEncoded {
     unsigned char * rawString;
 
     size_t rawStringSize;
-    unsigned char ** macroblocks;
+    struct macroblock ** macroblocks;
     size_t macroblocksSize;
     size_t macroblocksX;
     size_t macroblocksY;
 };
 
-struct macroBlock {
-
-};
 
 
 struct pgmEncoded * readInput(char *fname);
@@ -74,6 +82,13 @@ struct pgmEncoded * readInput(char *fname) {
     input->macroblocksX = input->xDim/16;
     input->macroblocksY = input->yDim/16;
 
+    input->macroblocks = (struct macroBlock **) malloc(input->macroblocksY * sizeof(struct macroBlock *));
+    int i = 0;
+    int j = 0;
+    for(i = 0; i< input->macroblocksY; i++) {
+        input->macroblocks[i] = (struct macroblock *)malloc(input->macroblocksX * sizeof(struct macroBlock));
+    }
+
     printf("xdim %d ydim %d\n", input->xDim, input->yDim);
     fgets(input->twoFiveFive,20,p);
     printf("%s\n", input->twoFiveFive);
@@ -116,9 +131,17 @@ struct pgmEncoded *pgmAllocator(struct pgmEncoded *pgm, size_t rawSize) {
 }
 
 void pgmDestroyer(struct pgmEncoded * pgm) {
+    int i = 0;
+    int j = 0;
     if (pgm != NULL) {
         if (pgm->rawString != NULL) {
             free(pgm->rawString);
+        }
+        if (pgm->macroblocks != NULL) {
+            for  (i = 0; i < pgm->macroblocksY;i++) {
+                free(pgm->macroblocks[i]);
+            }
+            free(pgm->macroblocks);
         }
         free(pgm);
     }
