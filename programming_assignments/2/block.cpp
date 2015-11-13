@@ -39,8 +39,6 @@ block::block() {
             reordered[i][j]=0;
         }
     }
-    currentIndexX = 0;
-    currentIndexY = 0;
     x = 0;
     y = 0;
 }
@@ -119,7 +117,7 @@ void block::zigzag() {
 void block::quantize(int qmatrix [8][8], double qscale) {
     for (int x= 0;x<BDIM;x++) {
         for (int y= 0;y<BDIM;y++) {
-            int val = round( transofrmed[y][x] / ((double)qmatrix[x][y]*qscale));
+            int val = (int)round( transofrmed[y][x] / ((double)qmatrix[x][y]*qscale));
             if (val < -127) {
                 val = -127;
             } else if (val > 128) {
@@ -156,12 +154,12 @@ void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macro
 
     setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);
 
-    int index=0;
-    int loc_x = 0;
-    int loc_y = 0;
-    for (int row = 0; row <BDIM; row++) {
-        loc_y = (y + row)*total_x;
-        for (int column = 0; column <BDIM; column++) {
+     size_t index=0;
+     size_t loc_x = 0;
+     size_t loc_y = 0;
+    for (size_t row = 0; row < BDIM; row++) {
+        loc_y = (y + row) * total_x;
+        for (size_t column = 0; column < BDIM; column++) {
             loc_x = x + column;
             index = loc_x + loc_y;
             items[column][row] = pEncoded->rawString[index];
@@ -173,8 +171,8 @@ void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macro
 
 void block::dump(FILE *outfile) {
     fprintf(outfile, "%lu %lu\n", x, y);
-    for (int i = 0;i<8;i++) {
-        for (int j = 0;j<8;j++) {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
             fprintf(outfile, "%5d", reordered[j][i]);
         }
         fprintf(outfile, "\n");

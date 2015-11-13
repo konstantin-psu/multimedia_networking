@@ -63,8 +63,8 @@ void macroblockManager::readAndDump(pgmEncoded *test) {
     x = test->xDim;
     y = test->yDim;
     initMacroBlocks(test);
-    for (int i =0; i < test->macroblocksX; i++) {
-        for (int j =0; j < test->macroblocksY; j++) {
+    for (size_t i =0; i < test->macroblocksX; i++) {
+        for (size_t j =0; j < test->macroblocksY; j++) {
             macroblocks[j][i].parse(test, j,i, x); // Let each macroblock to parse it's own part
         }
 
@@ -134,7 +134,7 @@ void macroblockManager::parseQuantMatrix(char *string) {
     int col = 0;
 
     while(fgets(line, lineSize, p) != NULL) { //read
-        int i = 0;
+        size_t i = 0;
         for (i = 0; i< lineSize; i++ ) {
             if (line[i] == 10) { // End of line - break;
                 if (strlen(qs) != 0) {

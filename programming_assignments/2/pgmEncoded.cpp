@@ -36,13 +36,10 @@
 pgmEncoded::pgmEncoded() {
     memset(this->twoFiveFive,0,20);
     memset(this->header,0,20);
-    this->headerSize = 0;
-    this->twoFiveFiveSize = 0;
     this->xDim = 0;
     this->yDim = 0;
 
     this->rawStringSize =0;
-    this->macroblocksSize = 0;
 
     this->macroblocksX = 0;
     this->macroblocksY = 0;

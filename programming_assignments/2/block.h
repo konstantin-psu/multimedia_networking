@@ -42,8 +42,6 @@ public:
     int reordered [8][8];       // Reordered items
     //Could use only one array to save space -- easier this way, though less efficient.
 
-    size_t currentIndexX;
-    size_t currentIndexY;
     size_t x; // Real offset in x
     size_t y; // Real offset in y
 

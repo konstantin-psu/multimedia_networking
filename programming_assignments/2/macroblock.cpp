@@ -45,7 +45,7 @@ void macroblock::transform(int quantMatrix [BLOCK_SIZE][BLOCK_SIZE], double qsca
  * mb_id_y - index y as index of double array of macroblocks in macroblocks manager
  * max_x   - total x size of the pgm
  */
-void macroblock::parse(pgmEncoded *pEncoded, int mb_ind_x, int mb_ind_y, size_t max_x) {
+void macroblock::parse(pgmEncoded *pEncoded, size_t mb_ind_x, size_t mb_ind_y, size_t max_x) {
     offset_x = mb_ind_x * MBLOCKSIZE; // Calculate real x offset
     offset_y = mb_ind_y * MBLOCKSIZE; // Calculate real y offset
 
