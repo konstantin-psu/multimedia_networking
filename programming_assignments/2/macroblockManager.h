@@ -9,6 +9,7 @@
 
 #include "block.h"
 #include "pgmEncoded.h"
+#include "macroblock.h"
 
 class macroblockManager {
 public:
@@ -16,7 +17,7 @@ public:
     ~macroblockManager();
     void read(pgmEncoded * test);
     void initBlocks(pgmEncoded * test);
-    block ** blocks;
+    macroblock **macroblocks;
     size_t blocksX;
     size_t blocksY;
     int x;

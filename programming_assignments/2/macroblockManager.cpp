@@ -12,17 +12,17 @@
 #define BSIZE 8
 
 macroblockManager::macroblockManager() {
-    blocks = NULL;
+    macroblocks = NULL;
     blocksX = 0;
     blocksY = 0;
 }
 
 macroblockManager::~macroblockManager() {
-    if (blocks != NULL) {
+    if (macroblocks != NULL) {
         for (int i=0; i< blocksX;i++) {
-            delete blocks[i];
+            delete macroblocks[i];
         }
-        delete blocks;
+        delete macroblocks;
     }
 }
 void macroblockManager::read(pgmEncoded * test) {
@@ -41,14 +41,14 @@ void macroblockManager::read(pgmEncoded * test) {
         }
         for (int j=0; j< test->yDim;j++) {
                 if (i%8 == 0 && j%8 == 0) {
-                    blocks[i / 8][j / 8].setIndex(i, j);
+                    macroblocks[i / 8][j / 8].setIndex(i, j);
                 }
                 if (j%8==0 && j!=0) {
                    rowCount++;
                 }
                 index = i * test->xDim + j;
                 cc++;
-                blocks[colCount][rowCount].add(test->rawString[index]);
+                macroblocks[colCount][rowCount].add(test->rawString[index]);
         }
         rowCount=0;
     }
@@ -57,9 +57,9 @@ void macroblockManager::read(pgmEncoded * test) {
 }
 
 void macroblockManager::initBlocks(pgmEncoded * test) {
-    this->blocks = new block * [test->macroblocksX];
+    this->macroblocks = new macroblock * [test->macroblocksX];
     for (int i = 0;i< test->macroblocksX;i++) {
-        blocks[i] = new block [test->macroblocksY];
+        macroblocks[i] = new macroblock [test->macroblocksY];
     }
 }
 void macroblockManager::transform() {
@@ -68,10 +68,7 @@ void macroblockManager::transform() {
     std::cout<<qscale<<"\n";
     for (int i = 0;i < blocksX;i++) {
         for (int j = 0;j < blocksY;j++) {
-            blocks[i][j].dct();
-            blocks[i][j].quantize(quantMatrix, qscale);
-            blocks[i][j].zigzag();
-            blocks[i][j].prettyPrint();
+            macroblocks[i][j].transform(quantMatrix, qscale);
         }
     }
 
