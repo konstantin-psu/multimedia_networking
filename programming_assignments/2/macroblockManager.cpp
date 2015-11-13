@@ -1,3 +1,20 @@
+/*
+* Class: Intro to Multimedia Networking 
+* 
+* Student: Konstantin Macarenco 
+* 
+* Programming assignment #2.  
+* 
+*/
+/*
+* Copyright (c) 2015. Konstantin Macarenco 
+* 
+* [This program is licensed under the GPL version 3 or later.] 
+* 
+* Please see the file COPYING in the source 
+* distribution of this software for license terms.  
+* 
+*/
 //
 // Created by kmacarenco on 11/9/15.
 //
@@ -25,7 +42,7 @@ macroblockManager::~macroblockManager() {
         delete macroblocks;
     }
 }
-void macroblockManager::read(pgmEncoded * test) {
+void macroblockManager::readAndDump(pgmEncoded *test) {
     blocksX = test->macroblocksX;
     blocksY = test->macroblocksY;
     x = test->xDim;
@@ -35,22 +52,11 @@ void macroblockManager::read(pgmEncoded * test) {
     size_t colCount = 0;
     initBlocks(test);
     int cc = 0;
-    for (int i=0; i< test->xDim;i++) {
-        if (i%8==0 && i!=0) {
-            colCount++;
+    for (int i =0; i < test->macroblocksX; i++) {
+        for (int j =0; j < test->macroblocksY; j++) {
+            macroblocks[j][i].parse(test, j,i, x);
         }
-        for (int j=0; j< test->yDim;j++) {
-                if (i%8 == 0 && j%8 == 0) {
-                    macroblocks[i / 8][j / 8].setIndex(i, j);
-                }
-                if (j%8==0 && j!=0) {
-                   rowCount++;
-                }
-                index = i * test->xDim + j;
-                cc++;
-                macroblocks[colCount][rowCount].add(test->rawString[index]);
-        }
-        rowCount=0;
+
     }
     transform();
     return;
@@ -68,7 +74,7 @@ void macroblockManager::transform() {
     std::cout<<qscale<<"\n";
     for (int i = 0;i < blocksX;i++) {
         for (int j = 0;j < blocksY;j++) {
-            macroblocks[i][j].transform(quantMatrix, qscale);
+            macroblocks[j][i].transform(quantMatrix, qscale);
         }
     }
 
@@ -129,5 +135,12 @@ void macroblockManager::parseQuantMatrix(char *string) {
 
 
     fclose(p);
+
+}
+
+void macroblockManager::init(char *qscale, char *quantfile, char *outputfile) {
+    setScale(qscale);
+    parseQuantMatrix(quantfile);
+    setOutFile(outputfile);
 
 }

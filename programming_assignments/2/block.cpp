@@ -1,3 +1,20 @@
+/*
+* Class: Intro to Multimedia Networking 
+* 
+* Student: Konstantin Macarenco 
+* 
+* Programming assignment #2.  
+* 
+*/
+/*
+* Copyright (c) 2015. Konstantin Macarenco 
+* 
+* [This program is licensed under the GPL version 3 or later.] 
+* 
+* Please see the file COPYING in the source 
+* distribution of this software for license terms.  
+* 
+*/
 //
 // Created by kmacarenco on 11/9/15.
 //
@@ -56,11 +73,11 @@ void block::dct() {
             double sum = 0;
             for (int x = 0; x< BDIM; x++) {
                 for (int y = 0; y< BDIM; y++) {
-                    sum += items[x][y]*cos(((double)(2*x+1)*(double)u*M_PI)/16.0)*cos(((double)(2*y+1)*(double)v*M_PI)/16.0);
+                    sum += items[y][x]*cos(((double)(2*y+1)*(double)v*M_PI)/16.0)*cos(((double)(2*x+1)*(double)u*M_PI)/16.0);
                 }
 
             }
-            transofrmed[u][v] = coef * sum;
+            transofrmed[v][u] = coef * sum;
 //            std::cout<<transofrmed[u][v]<<std::endl;
         }
     }
@@ -82,7 +99,7 @@ void block::zigzag() {
             res = (i & 1) ? j * (m - 1) + i : (i - j) * m + j;
             r = res / 8;
             c = res - r * 8;
-            reordered[x][y] = quantized[r][c];
+            reordered[y][x] = quantized[c][r];
         }
     }
 
@@ -92,14 +109,14 @@ void block::zigzag() {
 void block::quantize(int qmatrix [8][8], double qscale) {
     for (int x= 0;x<BDIM;x++) {
         for (int y= 0;y<BDIM;y++) {
-            int val = round( transofrmed[x][y] / (qmatrix[x][y]*qscale));
+            int val = round( transofrmed[y][x] / (qmatrix[x][y]*qscale));
             if (val < -127) {
                 val = -127;
             } else if (val > 128) {
                 val = -128;
             }
             val +=127;
-            quantized[x][y] = val;
+            quantized[y][x] = val;
 
         }
 
@@ -111,13 +128,27 @@ void block::prettyPrint() {
     std::cout<<x<<" "<<y<<std::endl;
     for (int i = 0;i<8;i++) {
         for (int j = 0;j<8;j++) {
-            if (j < 7)
-                std::cout<<"  "<<reordered[i][j];
-            else
-                std::cout<<"  "<<reordered[i][j];
+              std::cout<<"  "<<reordered[j][i];
 //            std::cout<<quantized[i][j]<<" ";
         }
         std::cout<<std::endl;
+    }
+
+}
+
+void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y, int block_offset_x, int block_offset_y, size_t total_x) {
+   setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);
+    int index=0;
+    int loc_x = 0;
+    int loc_y = 0;
+    for (int i= 0;i<BDIM;i++) {
+        loc_y = (y +i)*total_x;
+        for (int j= 0;j<BDIM;j++) {
+            loc_x = x +j;
+            index = loc_x + loc_y;
+            items[j][i] = pEncoded->rawString[index];
+        }
+
     }
 
 }

@@ -1,3 +1,20 @@
+/*
+* Class: Intro to Multimedia Networking 
+* 
+* Student: Konstantin Macarenco 
+* 
+* Programming assignment #2.  
+* 
+*/
+/*
+* Copyright (c) 2015. Konstantin Macarenco 
+* 
+* [This program is licensed under the GPL version 3 or later.] 
+* 
+* Please see the file COPYING in the source 
+* distribution of this software for license terms.  
+* 
+*/
 //
 // Created by kmacarenco on 11/9/15.
 //
@@ -6,6 +23,7 @@
 #define JPEG_DCT_BLOCK_H
 
 #include <stddef.h>
+#include "pgmEncoded.h"
 
 class block {
 public:
@@ -26,6 +44,8 @@ public:
     void quantize(int qmatrix[8][8], double qscale);
 
     void prettyPrint();
+
+    void parse(pgmEncoded *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x);
 };
 
 #endif //JPEG_DCT_BLOCK_H

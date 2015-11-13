@@ -1,3 +1,20 @@
+/*
+* Class: Intro to Multimedia Networking 
+* 
+* Student: Konstantin Macarenco 
+* 
+* Programming assignment #2.  
+* 
+*/
+/*
+* Copyright (c) 2015. Konstantin Macarenco 
+* 
+* [This program is licensed under the GPL version 3 or later.] 
+* 
+* Please see the file COPYING in the source 
+* distribution of this software for license terms.  
+* 
+*/
 //
 // Created by kmacarenco on 11/9/15.
 //
@@ -15,7 +32,7 @@ class macroblockManager {
 public:
     macroblockManager();
     ~macroblockManager();
-    void read(pgmEncoded * test);
+    void readAndDump(pgmEncoded *test);
     void initBlocks(pgmEncoded * test);
     macroblock **macroblocks;
     size_t blocksX;
@@ -33,6 +50,8 @@ public:
     void setOutFile(char *string);
 
     void parseQuantMatrix(char *string);
+
+    void init(char *qscale, char *quantfile, char *outputfile);
 };
 
 #endif //JPEG_DCT_MACROBLOCKMANAGER_H

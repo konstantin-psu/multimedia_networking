@@ -1,3 +1,20 @@
+/*
+* Class: Intro to Multimedia Networking 
+* 
+* Student: Konstantin Macarenco 
+* 
+* Programming assignment #2.  
+* 
+*/
+/*
+* Copyright (c) 2015. Konstantin Macarenco 
+* 
+* [This program is licensed under the GPL version 3 or later.] 
+* 
+* Please see the file COPYING in the source 
+* distribution of this software for license terms.  
+* 
+*/
 //
 // Created by kmacarenco on 11/9/15.
 //
@@ -60,8 +77,8 @@ void pgmEncoded::readInput(char *fname) {
     this->yDim = atoi(dim);
 
     this->macroblocksSize = this->xDim/8 * this->yDim/8; //Should be safe since we assume that all thiss are multiples of 16.
-    this->macroblocksX = this->xDim/8;
-    this->macroblocksY = this->yDim/8;
+    this->macroblocksX = this->xDim/16;
+    this->macroblocksY = this->yDim/16;
 
 
     fgets(this->twoFiveFive,20,p);
