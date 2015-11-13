@@ -25,6 +25,14 @@
 #include <iostream>
 #include "pgmEncoded.h"
 
+/*
+ * implementation of pgmEncoded class
+ */
+
+/*
+ * Default constructor
+ * Set everything to 0
+ */
 pgmEncoded::pgmEncoded() {
     memset(this->twoFiveFive,0,20);
     memset(this->header,0,20);
@@ -41,17 +49,28 @@ pgmEncoded::pgmEncoded() {
     this->rawString = NULL;
 }
 
+/*
+ * Default destructor
+ * rawString is the only thing needs to be cleaned up
+ */
 pgmEncoded::~pgmEncoded() {
     if (this->rawString != NULL) {
         free(this->rawString);
     }
 }
 
+/*
+ * Allocate rawString
+ */
 void pgmEncoded::init(size_t rawSize) {
     this->rawString = (unsigned char*) malloc(rawSize);
     memset(this->rawString, 0, rawSize);
 }
 
+
+/*
+ * Read input file
+ */
 void pgmEncoded::readInput(char *fname) {
     FILE * p = fopen(fname, "rb"); // Open file with reading permission
     if (p == NULL) {
@@ -59,33 +78,37 @@ void pgmEncoded::readInput(char *fname) {
         exit(1);
     }
 
+    // Figure out total size of the file;
     fseek(p, 0L, SEEK_END);
     size_t totSize = ftell(p);
     fseek(p, 0L, SEEK_SET);
 
-    this->init(totSize);
+    this->init(totSize); // Allocate array for raw string
 
-    char line [100];
+    char line [100];   // Temp string
     memset(line, 0, 100);
-    fgets(this->header,20,p);
-    fgets(line,100,p);
+    fgets(this->header,20,p); // Read header
+    fgets(line,100,p); // Read dimensions
     line[strlen(line) - 1] = 0;
     char * dim;
-    dim = strtok (line," ");
+    dim = strtok (line," "); //Convert dimensions to Int
     this->xDim = atoi(dim);
     dim = strtok (line," ");
     this->yDim = atoi(dim);
 
-    this->macroblocksSize = this->xDim/8 * this->yDim/8; //Should be safe since we assume that all thiss are multiples of 16.
-    this->macroblocksX = this->xDim/16;
+    if (xDim % 16 != 0 || yDim % 16 != 0)  {
+        std::cout<<"Error, input file dimensions expected to be divisible by 16\n";
+        exit(1);
+    }
+    this->macroblocksX = this->xDim/16; // Calculate number of macroblocks
     this->macroblocksY = this->yDim/16;
 
 
-    fgets(this->twoFiveFive,20,p);
+    fgets(this->twoFiveFive,20,p); // Skip 255 line
     size_t sz = ftell(p);
 
-    size_t iter = totSize - sz;
-    fread(this->rawString, iter, 1, p);
-    this->rawStringSize = iter;
-    fclose(p);
+    size_t encodedLineSize = totSize - sz;
+    fread(this->rawString, encodedLineSize, 1, p); // Read encoded part in binary.
+    this->rawStringSize = encodedLineSize;
+    fclose(p);  // Don't forget to close the input file.
 }
