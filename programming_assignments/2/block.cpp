@@ -24,6 +24,13 @@
 #include <iostream>
 #define BDIM 8
 
+/*
+ * Implementation of the block class
+ */
+
+/*
+ * Default constructor - just set everything to 0
+ */
 block::block() {
     for (int i = 0; i < BDIM;i++) {
         for (int j = 0;j< BDIM;j++) {
@@ -37,20 +44,19 @@ block::block() {
     x = 0;
     y = 0;
 }
-void block::add(unsigned char c) {
-    items[currentIndexX][currentIndexY] = c;
-    currentIndexY++;
-    if (currentIndexY % BDIM == 0) {
-        currentIndexY = 0;
-        currentIndexX++;
-    }
-}
 
+/*
+ * Offset setter
+ */
 void block::setIndex(size_t x, size_t y) {
     this->x = x;
     this->y = y;
 }
 
+
+/*
+ * Dct transform (Just apply the given formula -- no optimizations
+ */
 void block::dct() {
     double C_u = 0.0;
     double C_v = 0.0;
@@ -73,47 +79,51 @@ void block::dct() {
             double sum = 0;
             for (int x = 0; x< BDIM; x++) {
                 for (int y = 0; y< BDIM; y++) {
-                    sum += items[y][x]*cos(((double)(2*y+1)*(double)v*M_PI)/16.0)*cos(((double)(2*x+1)*(double)u*M_PI)/16.0);
+                    sum += (double)items[y][x]*cos(((double)(2*y+1)*(double)v*M_PI)/16.0)*cos(((double)(2*x+1)*(double)u*M_PI)/16.0);
                 }
 
             }
             transofrmed[v][u] = coef * sum;
-//            std::cout<<transofrmed[u][v]<<std::endl;
         }
     }
     return;
-
 }
 
+/*
+ * Zigzag reorder
+ */
 void block::zigzag() {
     int m = 8;
-    int x=0, y =0;
-    int r=0,c=0;
+    int y =0, x =0;
+    int c =0, r =0; //row and column
     int res=0;
     int n = 0;
     for (int i = 0; i < m * 2; i++) {
         for (int j = (i < m) ? 0 : i - m + 1; j <= i && j < m; j++) {
-            x = n / 8;
-            y = n - x * 8;
+            y = n / 8;
+            x = n - y * 8;
             n++;
             res = (i & 1) ? j * (m - 1) + i : (i - j) * m + j;
-            r = res / 8;
-            c = res - r * 8;
-            reordered[y][x] = quantized[c][r];
+            c = res / 8;
+            r = res - c * 8;
+            reordered[x][y] = quantized[r][c];
         }
     }
 
 
 }
 
+/*
+ * Quantize the transformed array
+ */
 void block::quantize(int qmatrix [8][8], double qscale) {
     for (int x= 0;x<BDIM;x++) {
         for (int y= 0;y<BDIM;y++) {
-            int val = round( transofrmed[y][x] / (qmatrix[x][y]*qscale));
+            int val = round( transofrmed[y][x] / ((double)qmatrix[x][y]*qscale));
             if (val < -127) {
                 val = -127;
             } else if (val > 128) {
-                val = -128;
+                val = 128;
             }
             val +=127;
             quantized[y][x] = val;
@@ -124,20 +134,28 @@ void block::quantize(int qmatrix [8][8], double qscale) {
 
 }
 
+/*
+ * Pretty print the block (mostly for debugging purposes)
+ */
 void block::prettyPrint() {
     std::cout<<x<<" "<<y<<std::endl;
     for (int i = 0;i<8;i++) {
         for (int j = 0;j<8;j++) {
               std::cout<<"  "<<reordered[j][i];
-//            std::cout<<quantized[i][j]<<" ";
         }
         std::cout<<std::endl;
     }
-
 }
 
+
+/*
+ * parse pgm into double array
+ */
 void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y, int block_offset_x, int block_offset_y, size_t total_x) {
-   setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);
+
+
+    setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);
+
     int index=0;
     int loc_x = 0;
     int loc_y = 0;
@@ -151,4 +169,14 @@ void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macro
 
     }
 
+}
+
+void block::dump(FILE *outfile) {
+    fprintf(outfile, "%lu %lu\n", x, y);
+    for (int i = 0;i<8;i++) {
+        for (int j = 0;j<8;j++) {
+            fprintf(outfile, "%5d", reordered[j][i]);
+        }
+        fprintf(outfile, "\n");
+    }
 }

@@ -28,19 +28,20 @@
 #include "block.h"
 #include "pgmEncoded.h"
 
+/*
+ * Representation of a single macroblock
+ */
 class macroblock {
 public:
-    block blocks [BLOCKS_DIM][BLOCKS_DIM];
-    void transform(int qmatrix [BLOCK_SIZE][BLOCK_SIZE], double);
+    block blocks [BLOCKS_DIM][BLOCKS_DIM]; // Each macroblock has fixed number of blocks
+    void transform(int qmatrix [BLOCK_SIZE][BLOCK_SIZE], double); // transofrm will apply dct, quantmatrix, and zigzag
+    void dump(FILE *outfile); // dump content to outfile
+    void parse(pgmEncoded *pEncoded, int i, int i1, size_t max_x); // Parse corresponding pgm encoded string
 
-    void parse(pgmEncoded *pEncoded, int i, int i1, size_t max_x);
-    size_t offset_x;
-    size_t offset_y;
-    size_t total_x;
+    size_t offset_x; // Macroblock offset in X dim
+    size_t offset_y; // Macroblock offset in Y dim
+    size_t total_x;  // Total size of file in X dim
 
-    void dump(FILE *outfile);
 };
-
-
 
 #endif //JPEG_DCT_MACROBLOCK_H

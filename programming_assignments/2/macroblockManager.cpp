@@ -87,9 +87,9 @@ void macroblockManager::initMacroBlocks(pgmEncoded *test) {
  * Transform and dump
  */
 void macroblockManager::transform() {
-    std::cout<<"MYDCT\n";
-    std::cout<<x<<" "<<y<<"\n";
-    std::cout<<qscale<<"\n";
+    //std::cout<<"MYDCT\n";
+    //std::cout<<x<<" "<<y<<"\n";
+    //std::cout<<qscale<<"\n";
     FILE * out = fopen(outfile, "w"); // Open out file with write permissions (file will be overwritten)
     dumpHeader(out);
     if (outfile == NULL) {
@@ -110,7 +110,7 @@ void macroblockManager::transform() {
 /*
  * Setters
  */
-void macroblockManager::setScale(char *string) { qscale =atoi(string); }
+void macroblockManager::setScale(char *string) { qscale =atof(string); }
 void macroblockManager::setOutFile(char *string) { outfile = string; }
 
 /*

@@ -111,12 +111,26 @@ myDCT/fast:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/build
 .PHONY : myDCT/fast
 
+#=============================================================================
+# Target rules for targets named myIDCT
+
+# Build rule for target.
+myIDCT: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 myIDCT
+.PHONY : myIDCT
+
+# fast build rule for target.
+myIDCT/fast:
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/build
+.PHONY : myIDCT/fast
+
 block.o: block.cpp.o
 .PHONY : block.o
 
 # target to build an object file
 block.cpp.o:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/block.cpp.o
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/block.cpp.o
 .PHONY : block.cpp.o
 
 block.i: block.cpp.i
@@ -125,6 +139,7 @@ block.i: block.cpp.i
 # target to preprocess a source file
 block.cpp.i:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/block.cpp.i
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/block.cpp.i
 .PHONY : block.cpp.i
 
 block.s: block.cpp.s
@@ -133,6 +148,7 @@ block.s: block.cpp.s
 # target to generate assembly for a file
 block.cpp.s:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/block.cpp.s
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/block.cpp.s
 .PHONY : block.cpp.s
 
 macroblock.o: macroblock.cpp.o
@@ -141,6 +157,7 @@ macroblock.o: macroblock.cpp.o
 # target to build an object file
 macroblock.cpp.o:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/macroblock.cpp.o
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/macroblock.cpp.o
 .PHONY : macroblock.cpp.o
 
 macroblock.i: macroblock.cpp.i
@@ -149,6 +166,7 @@ macroblock.i: macroblock.cpp.i
 # target to preprocess a source file
 macroblock.cpp.i:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/macroblock.cpp.i
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/macroblock.cpp.i
 .PHONY : macroblock.cpp.i
 
 macroblock.s: macroblock.cpp.s
@@ -157,6 +175,7 @@ macroblock.s: macroblock.cpp.s
 # target to generate assembly for a file
 macroblock.cpp.s:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/macroblock.cpp.s
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/macroblock.cpp.s
 .PHONY : macroblock.cpp.s
 
 macroblockManager.o: macroblockManager.cpp.o
@@ -165,6 +184,7 @@ macroblockManager.o: macroblockManager.cpp.o
 # target to build an object file
 macroblockManager.cpp.o:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/macroblockManager.cpp.o
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/macroblockManager.cpp.o
 .PHONY : macroblockManager.cpp.o
 
 macroblockManager.i: macroblockManager.cpp.i
@@ -173,6 +193,7 @@ macroblockManager.i: macroblockManager.cpp.i
 # target to preprocess a source file
 macroblockManager.cpp.i:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/macroblockManager.cpp.i
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/macroblockManager.cpp.i
 .PHONY : macroblockManager.cpp.i
 
 macroblockManager.s: macroblockManager.cpp.s
@@ -181,6 +202,7 @@ macroblockManager.s: macroblockManager.cpp.s
 # target to generate assembly for a file
 macroblockManager.cpp.s:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/macroblockManager.cpp.s
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/macroblockManager.cpp.s
 .PHONY : macroblockManager.cpp.s
 
 myDCT.o: myDCT.cpp.o
@@ -189,6 +211,7 @@ myDCT.o: myDCT.cpp.o
 # target to build an object file
 myDCT.cpp.o:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/myDCT.cpp.o
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/myDCT.cpp.o
 .PHONY : myDCT.cpp.o
 
 myDCT.i: myDCT.cpp.i
@@ -197,6 +220,7 @@ myDCT.i: myDCT.cpp.i
 # target to preprocess a source file
 myDCT.cpp.i:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/myDCT.cpp.i
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/myDCT.cpp.i
 .PHONY : myDCT.cpp.i
 
 myDCT.s: myDCT.cpp.s
@@ -205,6 +229,7 @@ myDCT.s: myDCT.cpp.s
 # target to generate assembly for a file
 myDCT.cpp.s:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/myDCT.cpp.s
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/myDCT.cpp.s
 .PHONY : myDCT.cpp.s
 
 pgmEncoded.o: pgmEncoded.cpp.o
@@ -213,6 +238,7 @@ pgmEncoded.o: pgmEncoded.cpp.o
 # target to build an object file
 pgmEncoded.cpp.o:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmEncoded.cpp.o
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmEncoded.cpp.o
 .PHONY : pgmEncoded.cpp.o
 
 pgmEncoded.i: pgmEncoded.cpp.i
@@ -221,6 +247,7 @@ pgmEncoded.i: pgmEncoded.cpp.i
 # target to preprocess a source file
 pgmEncoded.cpp.i:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmEncoded.cpp.i
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmEncoded.cpp.i
 .PHONY : pgmEncoded.cpp.i
 
 pgmEncoded.s: pgmEncoded.cpp.s
@@ -229,6 +256,7 @@ pgmEncoded.s: pgmEncoded.cpp.s
 # target to generate assembly for a file
 pgmEncoded.cpp.s:
 	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmEncoded.cpp.s
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmEncoded.cpp.s
 .PHONY : pgmEncoded.cpp.s
 
 # Help Target
@@ -239,6 +267,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... myDCT"
+	@echo "... myIDCT"
 	@echo "... rebuild_cache"
 	@echo "... block.o"
 	@echo "... block.i"
