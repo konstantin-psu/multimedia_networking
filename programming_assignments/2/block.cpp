@@ -141,12 +141,12 @@ void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macro
     int index=0;
     int loc_x = 0;
     int loc_y = 0;
-    for (int i= 0;i<BDIM;i++) {
-        loc_y = (y +i)*total_x;
-        for (int j= 0;j<BDIM;j++) {
-            loc_x = x +j;
+    for (int row = 0; row <BDIM; row++) {
+        loc_y = (y + row)*total_x;
+        for (int column = 0; column <BDIM; column++) {
+            loc_x = x + column;
             index = loc_x + loc_y;
-            items[j][i] = pEncoded->rawString[index];
+            items[column][row] = pEncoded->rawString[index];
         }
 
     }

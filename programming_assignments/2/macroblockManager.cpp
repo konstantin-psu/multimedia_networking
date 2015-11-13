@@ -26,35 +26,46 @@
 #include <iostream>
 #include "pgmEncoded.h"
 #include "macroblockManager.h"
-#define BSIZE 8
 
+
+/*
+ * MacroblockManager implementation
+ */
+
+/*
+ * Default constructor
+ */
 macroblockManager::macroblockManager() {
     macroblocks = NULL;
-    blocksX = 0;
-    blocksY = 0;
+    macroBlocksX = 0;
+    macroBlocksY = 0;
 }
 
+
+/*
+ * Default destructor
+ */
 macroblockManager::~macroblockManager() {
     if (macroblocks != NULL) {
-        for (int i=0; i< blocksX;i++) {
+        for (int i=0; i< macroBlocksX;i++) {
             delete macroblocks[i];
         }
         delete macroblocks;
     }
 }
+
+/*
+ * Read pgm and dump DCT
+ */
 void macroblockManager::readAndDump(pgmEncoded *test) {
-    blocksX = test->macroblocksX;
-    blocksY = test->macroblocksY;
+    macroBlocksX = test->macroblocksX;
+    macroBlocksY = test->macroblocksY;
     x = test->xDim;
     y = test->yDim;
-    size_t index = 0;
-    size_t rowCount = 0;
-    size_t colCount = 0;
-    initBlocks(test);
-    int cc = 0;
+    initMacroBlocks(test);
     for (int i =0; i < test->macroblocksX; i++) {
         for (int j =0; j < test->macroblocksY; j++) {
-            macroblocks[j][i].parse(test, j,i, x);
+            macroblocks[j][i].parse(test, j,i, x); // Let each macroblock to parse it's own part
         }
 
     }
@@ -62,34 +73,49 @@ void macroblockManager::readAndDump(pgmEncoded *test) {
     return;
 }
 
-void macroblockManager::initBlocks(pgmEncoded * test) {
+/*
+ * Allocate macroblocks
+ */
+void macroblockManager::initMacroBlocks(pgmEncoded *test) {
     this->macroblocks = new macroblock * [test->macroblocksX];
     for (int i = 0;i< test->macroblocksX;i++) {
         macroblocks[i] = new macroblock [test->macroblocksY];
     }
 }
+
+/*
+ * Transform and dump
+ */
 void macroblockManager::transform() {
     std::cout<<"MYDCT\n";
     std::cout<<x<<" "<<y<<"\n";
     std::cout<<qscale<<"\n";
-    for (int i = 0;i < blocksX;i++) {
-        for (int j = 0;j < blocksY;j++) {
-            macroblocks[j][i].transform(quantMatrix, qscale);
+    FILE * out = fopen(outfile, "w"); // Open out file with write permissions (file will be overwritten)
+    dumpHeader(out);
+    if (outfile == NULL) {
+        printf("Failed to open %s\n", outfile);
+        exit(1);
+    }
+    for (int i = 0;i < macroBlocksX;i++) {
+        for (int j = 0;j < macroBlocksY;j++) {
+            macroblocks[j][i].transform(quantMatrix, qscale); // Make each macrobock to transform itself
+            macroblocks[j][i].dump(out); // Make each macrobock to dump itself
         }
     }
+    fclose(out);
 
     return;
 }
 
-void macroblockManager::setScale(char *string) {
-    qscale =atoi(string);
+/*
+ * Setters
+ */
+void macroblockManager::setScale(char *string) { qscale =atoi(string); }
+void macroblockManager::setOutFile(char *string) { outfile = string; }
 
-}
-
-void macroblockManager::setOutFile(char *string) {
-    outfile = string;
-}
-
+/*
+ * Parse quantfile
+ */
 void macroblockManager::parseQuantMatrix(char *string) {
     FILE * p = fopen(string, "r");
     if (p == NULL) {
@@ -97,28 +123,31 @@ void macroblockManager::parseQuantMatrix(char *string) {
         exit(1);
     }
 
-    char line [100]; // Read line
-    char qs [100];
-    memset(qs,0,100);
+    size_t lineSize = 1000;
+    size_t charSize = 100;
+    char line [lineSize]; // Templine
+    char qs [charSize]; // Temp char (100 symbols is overkill but whatever)
+    memset(qs,0,charSize);
 
     int count = 0;
     int row = 0;
     int col = 0;
-    while(fgets(line, 100, p) != NULL) {
+
+    while(fgets(line, lineSize, p) != NULL) { //read
         int i = 0;
-        for (i = 0; i< 100; i++ ) {
-            if (line[i] == 10) {
+        for (i = 0; i< lineSize; i++ ) {
+            if (line[i] == 10) { // End of line - break;
                 if (strlen(qs) != 0) {
-                    quantMatrix[row][col] = atoi(qs);
+                    quantMatrix[row][col] = atoi(qs); // set entry in the matrix
                 }
-                memset(qs,0,100);
+                memset(qs,0,charSize);
                 count=0;
                 col=0;
                 break;
             } else if (line[i] == 32) { // Search for space
                 if (strlen(qs) == 0) {continue;}
                 else {
-                    quantMatrix[row][col] = atoi(qs);
+                    quantMatrix[row][col] = atoi(qs); // set entry in the matrix
                     memset(qs,0,100);
                     count=0;
                     col++;
@@ -129,7 +158,10 @@ void macroblockManager::parseQuantMatrix(char *string) {
             }
         }
         row++;
-
+    }
+    if (row >8 || col > 8) {
+        std::cout<<"Error: quantfile expected to have 8 columns and 8 rows\n";
+        exit(1);
     }
 
 
@@ -138,9 +170,21 @@ void macroblockManager::parseQuantMatrix(char *string) {
 
 }
 
+/*
+ * Initialize object
+ */
 void macroblockManager::init(char *qscale, char *quantfile, char *outputfile) {
     setScale(qscale);
     parseQuantMatrix(quantfile);
     setOutFile(outputfile);
 
+}
+
+/*
+ * Dump dct header
+ */
+void macroblockManager::dumpHeader(FILE *pFILE) {
+    fprintf(pFILE, "%s\n", "MYDCT");
+    fprintf(pFILE, "%lu %lu\n", x, y);
+    fprintf(pFILE, "%f\n", qscale);
 }

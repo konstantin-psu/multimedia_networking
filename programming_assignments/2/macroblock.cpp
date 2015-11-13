@@ -45,3 +45,7 @@ void macroblock::parse(pgmEncoded *pEncoded, int mb_ind_x, int mb_ind_y, size_t 
         }
     }
 }
+
+void macroblock::dump(FILE *outfile) {
+
+}

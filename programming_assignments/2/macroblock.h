@@ -37,6 +37,8 @@ public:
     size_t offset_x;
     size_t offset_y;
     size_t total_x;
+
+    void dump(FILE *outfile);
 };
 
 

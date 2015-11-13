@@ -28,30 +28,35 @@
 #include "pgmEncoded.h"
 #include "macroblock.h"
 
+
+/*
+ * This is the Driver class, creates and controls structure
+ */
 class macroblockManager {
 public:
     macroblockManager();
     ~macroblockManager();
-    void readAndDump(pgmEncoded *test);
-    void initBlocks(pgmEncoded * test);
-    macroblock **macroblocks;
-    size_t blocksX;
-    size_t blocksY;
-    int x;
-    int y;
-    void transform();
+    void readAndDump(pgmEncoded *test); // Read pgmEncoded string and dump it to output file
+    void initMacroBlocks(pgmEncoded *test);
+    macroblock **macroblocks;  //  Two dimensional array of macroblocks (the only thing here that needs to be deleted
+    size_t macroBlocksX; // Number of macro blocks in X dim
+    size_t macroBlocksY; // Number of macro blocks in Y dim
+    size_t x;  // Total X dim of the input
+    size_t y;  // Total Y dim of the input
+
+    void transform(); // Perform DCT transformation
     double qscale;
     char * outfile;
 
-    int quantMatrix[BDIM][BDIM];
+    int quantMatrix[BDIM][BDIM]; // quantmatrix - aquired by parsing quantfile
 
     void setScale(char *string);
-
     void setOutFile(char *string);
-
     void parseQuantMatrix(char *string);
 
     void init(char *qscale, char *quantfile, char *outputfile);
+
+    void dumpHeader(FILE *pFILE);
 };
 
 #endif //JPEG_DCT_MACROBLOCKMANAGER_H
