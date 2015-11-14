@@ -1,0 +1,6 @@
+#!/bin/bash
+rm outTest* || ls
+./myDCT tests/0/test0.pgm ./quantfile 1.0 outTest0
+./myDCT tests/1/test1.pgm ./quantfile 1.0 outTest1
+./myDCT tests/2/test2.pgm ./quantfile 1.0 outTest2
+./myDCT tests/2/test2.pgm ./quantfile 3.5 outTest35
