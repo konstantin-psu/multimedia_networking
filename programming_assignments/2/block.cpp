@@ -149,7 +149,7 @@ void block::prettyPrint() {
 /*
  * parse pgm into double array
  */
-void block::parse(pgmEncoded *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y, int block_offset_x, int block_offset_y, size_t total_x) {
+void block::parse(pgmFileParser *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y, int block_offset_x, int block_offset_y, size_t total_x) {
 
 
     setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);

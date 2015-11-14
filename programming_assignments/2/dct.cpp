@@ -23,18 +23,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "dctEncoded.h"
+#include "dct.h"
 
 /*
- * implementation of dctEncoded class
+ * implementation of dct class
  */
 
 /*
  * Default constructor
  * Set everything to 0
  */
-dctEncoded::dctEncoded() {
-    memset(this->twoFiveFive,0,20);
+dct::dct() {
+    memset(this->quant,0,20);
     memset(this->header,0,20);
     this->xDim = 0;
     this->yDim = 0;
@@ -50,7 +50,7 @@ dctEncoded::dctEncoded() {
  * Default destructor
  * rawString is the only thing needs to be cleaned up
  */
-dctEncoded::~dctEncoded() {
+dct::~dct() {
     if (this->rawString != NULL) {
         free(this->rawString);
     }
@@ -59,7 +59,7 @@ dctEncoded::~dctEncoded() {
 /*
  * Allocate rawString
  */
-void dctEncoded::init(size_t rawSize) {
+void dct::init(size_t rawSize) {
     this->rawString = (unsigned char*) malloc(rawSize);
     memset(this->rawString, 0, rawSize);
 }
@@ -68,7 +68,7 @@ void dctEncoded::init(size_t rawSize) {
 /*
  * Read input file
  */
-void dctEncoded::readInput(char *fname) {
+void dct::readInput(char *fname) {
     FILE * p = fopen(fname, "rb"); // Open file with reading permission
     if (p == NULL) {
         printf("Failed to open %s\n", fname);
@@ -80,7 +80,7 @@ void dctEncoded::readInput(char *fname) {
     size_t totSize = ftell(p);
     fseek(p, 0L, SEEK_SET);
 
-    this->init(totSize); // Allocate array for raw string
+    init(totSize);
 
     char line [100];   // Temp string
     memset(line, 0, 100);
@@ -101,8 +101,9 @@ void dctEncoded::readInput(char *fname) {
     this->macroblocksY = this->yDim/16;
 
 
-    fgets(this->twoFiveFive,20,p); // Skip 255 line
+    fgets(this->quant,20,p); // Skip 255 line
     size_t sz = ftell(p);
+    quantization = atof(quant);
 
     size_t encodedLineSize = totSize - sz;
     fread(this->rawString, encodedLineSize, 1, p); // Read encoded part in binary.

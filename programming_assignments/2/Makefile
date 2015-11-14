@@ -232,32 +232,32 @@ myDCT.cpp.s:
 	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/myDCT.cpp.s
 .PHONY : myDCT.cpp.s
 
-pgmEncoded.o: pgmEncoded.cpp.o
-.PHONY : pgmEncoded.o
+pgmFileParser.o: pgmFileParser.cpp.o
+.PHONY : pgmFileParser.o
 
 # target to build an object file
-pgmEncoded.cpp.o:
-	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmEncoded.cpp.o
-	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmEncoded.cpp.o
-.PHONY : pgmEncoded.cpp.o
+pgmFileParser.cpp.o:
+	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmFileParser.cpp.o
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmFileParser.cpp.o
+.PHONY : pgmFileParser.cpp.o
 
-pgmEncoded.i: pgmEncoded.cpp.i
-.PHONY : pgmEncoded.i
+pgmFileParser.i: pgmFileParser.cpp.i
+.PHONY : pgmFileParser.i
 
 # target to preprocess a source file
-pgmEncoded.cpp.i:
-	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmEncoded.cpp.i
-	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmEncoded.cpp.i
-.PHONY : pgmEncoded.cpp.i
+pgmFileParser.cpp.i:
+	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmFileParser.cpp.i
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmFileParser.cpp.i
+.PHONY : pgmFileParser.cpp.i
 
-pgmEncoded.s: pgmEncoded.cpp.s
-.PHONY : pgmEncoded.s
+pgmFileParser.s: pgmFileParser.cpp.s
+.PHONY : pgmFileParser.s
 
 # target to generate assembly for a file
-pgmEncoded.cpp.s:
-	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmEncoded.cpp.s
-	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmEncoded.cpp.s
-.PHONY : pgmEncoded.cpp.s
+pgmFileParser.cpp.s:
+	$(MAKE) -f CMakeFiles/myDCT.dir/build.make CMakeFiles/myDCT.dir/pgmFileParser.cpp.s
+	$(MAKE) -f CMakeFiles/myIDCT.dir/build.make CMakeFiles/myIDCT.dir/pgmFileParser.cpp.s
+.PHONY : pgmFileParser.cpp.s
 
 # Help Target
 help:
@@ -281,9 +281,9 @@ help:
 	@echo "... myDCT.o"
 	@echo "... myDCT.i"
 	@echo "... myDCT.s"
-	@echo "... pgmEncoded.o"
-	@echo "... pgmEncoded.i"
-	@echo "... pgmEncoded.s"
+	@echo "... pgmFileParser.o"
+	@echo "... pgmFileParser.i"
+	@echo "... pgmFileParser.s"
 .PHONY : help
 
 

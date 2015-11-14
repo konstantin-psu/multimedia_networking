@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include "block.h"
-#include "pgmEncoded.h"
+#include "pgmFileParser.h"
 
 /*
  * Representation of a single macroblock
@@ -35,8 +35,8 @@ class macroblock {
 public:
     block blocks [BLOCKS_DIM][BLOCKS_DIM]; // Each macroblock has fixed number of blocks
     void transform(int qmatrix [BLOCK_SIZE][BLOCK_SIZE], double); // transofrm will apply dct, quantmatrix, and zigzag
-    void dump(FILE *outfile); // dump content to outfile
-    void parse(pgmEncoded *pEncoded, size_t i, size_t i1, size_t max_x); // Parse corresponding pgm encoded string
+    void dump(FILE *outfile); // dump content to outDCT
+    void parse(pgmFileParser *pEncoded, size_t i, size_t i1, size_t max_x); // Parse corresponding pgm encoded string
 
     size_t offset_x; // Macroblock offset in X dim
     size_t offset_y; // Macroblock offset in Y dim

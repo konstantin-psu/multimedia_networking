@@ -19,12 +19,26 @@
  * Copyright Info
  */
 #include <stdlib.h>
+#include <iostream>
+#include "macroblockManager.h"
 
 
 /*
  * Nothing interesting is happening here.
  */
 int main(int args, char * argv []) {
+    if (args != 4) { //Force correct number of args
+        std::cout<<"Error: Invalid number of arguments\n"
+                "Usage:\n"
+                "   myIDCT <input image full path> <quant file full path> <output file>\n";
+        exit(1);
+    }
+    char * inputImage = argv[1];              // get pgm file path
+    char * quantfile = argv[2];               // get quant file path
+    char * outputFile = argv[3];              // get output file path
+    macroblockManager manager;
+    manager.init_dct(inputImage,quantfile, outputFile);
+    manager.parseAndDumpDCT();
     return 0;
 }
 

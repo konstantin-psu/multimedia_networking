@@ -19,7 +19,7 @@
  * Copyright Info
  */
 #include <stdlib.h>
-#include "pgmEncoded.h"
+#include "pgmFileParser.h"
 #include "macroblockManager.h"
 
 
@@ -38,7 +38,7 @@ int main(int args, char * argv []) {
     char * qscale = argv[3];                  // get desired compression ratio
     char * outputFile = argv[4];              // get output file path
     macroblockManager mblocksManager;         // create macroblock manager
-    pgmEncoded * pgmInput = new pgmEncoded(); //create pgm parser
+    pgmFileParser * pgmInput = new pgmFileParser(); //create pgm parser
 
 
     pgmInput->readInput(inputImage);                     // Parse pgm file

@@ -25,8 +25,9 @@
 #define BDIM 8
 
 #include "block.h"
-#include "pgmEncoded.h"
+#include "pgmFileParser.h"
 #include "macroblock.h"
+#include "dct.h"
 
 
 /*
@@ -36,8 +37,8 @@ class macroblockManager {
 public:
     macroblockManager();
     ~macroblockManager();
-    void readAndDump(pgmEncoded *test); // Read pgmEncoded string and dump it to output file
-    void initMacroBlocks(pgmEncoded *test);
+    void readAndDump(pgmFileParser *test); // Read pgmFileParser string and dump it to output file
+    void initMacroBlocks(pgmFileParser *test);
     macroblock **macroblocks;  //  Two dimensional array of macroblocks (the only thing here that needs to be deleted
     size_t macroBlocksX; // Number of macro blocks in X dim
     size_t macroBlocksY; // Number of macro blocks in Y dim
@@ -46,7 +47,11 @@ public:
 
     void transform(); // Perform DCT transformation
     double qscale;
-    char * outfile;
+    char *outDCT;
+    char * inDct;
+    char * outPGM;
+    char *quantFile;
+    dct  dctRaw;
 
     int quantMatrix[BDIM][BDIM]; // quantmatrix - aquired by parsing quantfile
 
@@ -57,6 +62,14 @@ public:
     void init(char *qscale, char *quantfile, char *outputfile);
 
     void dumpHeader(FILE *pFILE);
+
+    void init_dct(char *inputImage, char *quantfile, char *outputfile);
+
+    void parseAndDumpDCT();
+
+    void fillMacroblocks();
+
+    void initMacroBlocks(dct *test);
 };
 
 #endif //JPEG_DCT_MACROBLOCKMANAGER_H

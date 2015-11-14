@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include "pgmEncoded.h"
+#include "pgmFileParser.h"
 #include "macroblockManager.h"
 
 
@@ -57,7 +57,7 @@ macroblockManager::~macroblockManager() {
 /*
  * Read pgm and dump DCT
  */
-void macroblockManager::readAndDump(pgmEncoded *test) {
+void macroblockManager::readAndDump(pgmFileParser *test) {
     macroBlocksX = test->macroblocksX;
     macroBlocksY = test->macroblocksY;
     x = test->xDim;
@@ -76,7 +76,14 @@ void macroblockManager::readAndDump(pgmEncoded *test) {
 /*
  * Allocate macroblocks
  */
-void macroblockManager::initMacroBlocks(pgmEncoded *test) {
+void macroblockManager::initMacroBlocks(pgmFileParser *test) {
+    this->macroblocks = new macroblock * [test->macroblocksX];
+    for (int i = 0;i< test->macroblocksX;i++) {
+        macroblocks[i] = new macroblock [test->macroblocksY];
+    }
+}
+
+void macroblockManager::initMacroBlocks(dct *test) {
     this->macroblocks = new macroblock * [test->macroblocksX];
     for (int i = 0;i< test->macroblocksX;i++) {
         macroblocks[i] = new macroblock [test->macroblocksY];
@@ -90,10 +97,10 @@ void macroblockManager::transform() {
     //std::cout<<"MYDCT\n";
     //std::cout<<x<<" "<<y<<"\n";
     //std::cout<<qscale<<"\n";
-    FILE * out = fopen(outfile, "w"); // Open out file with write permissions (file will be overwritten)
+    FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
     dumpHeader(out);
-    if (outfile == NULL) {
-        printf("Failed to open %s\n", outfile);
+    if (outDCT == NULL) {
+        printf("Failed to open %s\n", outDCT);
         exit(1);
     }
     for (int i = 0;i < macroBlocksX;i++) {
@@ -111,7 +118,7 @@ void macroblockManager::transform() {
  * Setters
  */
 void macroblockManager::setScale(char *string) { qscale =atof(string); }
-void macroblockManager::setOutFile(char *string) { outfile = string; }
+void macroblockManager::setOutFile(char *string) { outDCT = string; }
 
 /*
  * Parse quantfile
@@ -187,4 +194,36 @@ void macroblockManager::dumpHeader(FILE *pFILE) {
     fprintf(pFILE, "%s\n", "MYDCT");
     fprintf(pFILE, "%lu %lu\n", x, y);
     fprintf(pFILE, "%f\n", qscale);
+}
+
+void macroblockManager::init_dct(char *inputImage, char *quantfile, char *outputfile) {
+    inDct = inputImage;
+    this->quantFile = quantfile;
+    this->outPGM = outputfile;
+}
+
+void macroblockManager::parseAndDumpDCT() {
+    parseQuantMatrix(quantFile);
+    dctRaw.readInput(inDct);
+    fillMacroblocks();
+    return;
+}
+
+void macroblockManager::fillMacroblocks() {
+    unsigned char * dctString = dctRaw.rawString;
+    unsigned char * currentMblock = dctRaw.rawString;
+
+    size_t mBlock_start = 0;
+    size_t mBlock_end = 0;
+    initMacroBlocks(dctRaw);
+
+
+    for (size_t pos = 0; pos < dctRaw.rawStringSize; pos++) {
+        if (dctString[pos] == 0) { break;}
+        else if (dctString[pos] == 10) {
+            mBlock_end = pos;
+        }
+
+    }
+
 }
