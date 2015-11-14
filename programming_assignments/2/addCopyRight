@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cpps=`ls *.cpp`
+headers=`ls *.h`
+echo $CINFO
+for i in $cpps
+do
+    sed -i '1s/^/\/*\n* Copyright (c) 2015. Konstantin Macarenco \n* \n* [This program is licensed under the GPL version 3 or later.] \n* \n* Please see the file COPYING in the source \n* distribution of this software for license terms.  \n* \n*\/\n/' $i 
+done
+
+for i in $headers
+do
+    sed -i '1s/^/\/*\n* Copyright (c) 2015. Konstantin Macarenco \n* \n* [This program is licensed under the GPL version 3 or later.] \n* \n* Please see the file COPYING in the source \n* distribution of this software for license terms.  \n* \n*\/\n/' $i 
+done

@@ -23,17 +23,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "pgmEncoded.h"
+#include "pgmFileParser.h"
 
 /*
- * implementation of pgmEncoded class
+ * implementation of pgmFileParser class
  */
 
 /*
  * Default constructor
  * Set everything to 0
  */
-pgmEncoded::pgmEncoded() {
+pgmFileParser::pgmFileParser() {
     memset(this->twoFiveFive,0,20);
     memset(this->header,0,20);
     this->xDim = 0;
@@ -50,7 +50,7 @@ pgmEncoded::pgmEncoded() {
  * Default destructor
  * rawString is the only thing needs to be cleaned up
  */
-pgmEncoded::~pgmEncoded() {
+pgmFileParser::~pgmFileParser() {
     if (this->rawString != NULL) {
         free(this->rawString);
     }
@@ -59,7 +59,7 @@ pgmEncoded::~pgmEncoded() {
 /*
  * Allocate rawString
  */
-void pgmEncoded::init(size_t rawSize) {
+void pgmFileParser::init(size_t rawSize) {
     this->rawString = (unsigned char*) malloc(rawSize);
     memset(this->rawString, 0, rawSize);
 }
@@ -68,7 +68,7 @@ void pgmEncoded::init(size_t rawSize) {
 /*
  * Read input file
  */
-void pgmEncoded::readInput(char *fname) {
+void pgmFileParser::readInput(char *fname) {
     FILE * p = fopen(fname, "rb"); // Open file with reading permission
     if (p == NULL) {
         printf("Failed to open %s\n", fname);

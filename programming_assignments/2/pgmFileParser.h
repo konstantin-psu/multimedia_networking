@@ -25,12 +25,12 @@
 #include <glob.h>
 
 // This class represent pgm encoded file.
-class pgmEncoded {
+class pgmFileParser {
 public:
 
-    pgmEncoded();
+    pgmFileParser();
 
-    ~pgmEncoded();
+    ~pgmFileParser();
 
     void init(size_t rawSize);
     void readInput(char *fname);

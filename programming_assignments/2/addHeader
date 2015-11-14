@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cpps=`ls *.cpp`
+headers=`ls *.h`
+echo $CINFO
+for i in $cpps
+do
+    sed -i '1s/^/\/*\n* Class: Intro to Multimedia Networking \n* \n* Student: Konstantin Macarenco \n* \n* Programming assignment #2.  \n* \n*\/\n/' $i 
+done
+
+for i in $headers
+do
+    sed -i '1s/^/\/*\n* Class: Intro to Multimedia Networking \n* \n* Student: Konstantin Macarenco \n* \n* Programming assignment #2.  \n* \n*\/\n/' $i 
+done
