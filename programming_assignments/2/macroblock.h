@@ -42,6 +42,9 @@ public:
     size_t offset_y; // Macroblock offset in Y dim
     // Total size of file in X dim
 
+    void fill_block(unsigned char *block, size_t b_offset_x, size_t b_offset_y);
+
+    void inverse_transform(int quantMarix[8][8], double qscale);
 };
 
 #endif //JPEG_DCT_MACROBLOCK_H

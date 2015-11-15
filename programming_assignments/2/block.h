@@ -50,6 +50,18 @@ public:
     void dump(FILE *outfile);
     void prettyPrint();
 
+    void fill(unsigned char *block, size_t b_oofset_x, size_t b_offset_y);
+
+    void inverse_zigzag();
+
+    void inverse_quantize(int quantMatrix[8][8], double qscale);
+
+    void inverse_dct();
+
+    void prettyPrintr();
+    void prettyPrintq();
+    void prettyPrintt();
+    void prettyPrintc();
 };
 
 #endif //JPEG_DCT_BLOCK_H

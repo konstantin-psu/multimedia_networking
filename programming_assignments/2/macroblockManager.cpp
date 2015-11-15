@@ -205,7 +205,11 @@ void macroblockManager::init_dct(char *inputImage, char *quantfile, char *output
 void macroblockManager::parseAndDumpDCT() {
     parseQuantMatrix(quantFile);
     dctRaw.readInput(inDct);
+    macroBlocksX = dctRaw.macroblocksX;
+    macroBlocksY = dctRaw.macroblocksY;
+    qscale = dctRaw.quantization;
     fillMacroblocks();
+    inverse_transofrm();
     return;
 }
 
@@ -215,15 +219,95 @@ void macroblockManager::fillMacroblocks() {
 
     size_t mBlock_start = 0;
     size_t mBlock_end = 0;
-    initMacroBlocks(dctRaw);
+    initMacroBlocks(&dctRaw);
+    size_t count = 0;
+    size_t b_end = 9;
 
 
+    /*
+     * TODO remove this:
+     * Find
+     */
     for (size_t pos = 0; pos < dctRaw.rawStringSize; pos++) {
         if (dctString[pos] == 0) { break;}
         else if (dctString[pos] == 10) {
-            mBlock_end = pos;
+            if (count == 8) {
+
+                mBlock_end = pos;
+                createMacroBlock(dctString, mBlock_start, mBlock_end);
+                mBlock_start = pos + 1;
+                count = 0;
+            } else {
+                count++;
+            }
         }
 
     }
+    printf("test");//TODO delete me
+
+}
+
+void macroblockManager::createMacroBlock(unsigned char *dctString, size_t start, size_t anEnd) {
+    unsigned char * cblock = dctString+start;
+    unsigned char * line = new unsigned char[500];
+    memset(line, 0, 500);
+    size_t offset_x = 0;
+    size_t offset_y = 0;
+    readLine(&cblock, &line);
+
+    parseOffset(line, &offset_x, &offset_y);
+    size_t macroblock_offset_x = offset_x/16;
+    size_t macroblock_offset_y = offset_y/16;
+    macroblocks[macroblock_offset_x][macroblock_offset_y].fill_block(cblock,offset_x,offset_y);
+    printf("pause");
+    delete(line);
+}
+
+void macroblockManager::readLine(unsigned char **src, unsigned char **dst) {
+
+    int index = 0;
+    unsigned char t;
+    while((*src)[index] != '\n'){
+        t = (*src)[index];
+        (*dst)[index] =t;
+        index ++;
+    }
+    *src = *src + index + 1;
+}
+
+void macroblockManager::parseOffset(unsigned char *line, size_t *offset_x, size_t *offset_y) {
+    size_t i = 0;
+    size_t j = 0;
+    char temp [100];
+    memset(temp,0,100);
+    while(line[i]!=32) {
+        temp[j] = line[i];
+        i++;
+    }
+    (*offset_x) = atoi(temp);
+    j=0;
+    while(line[i]!=0) {
+        temp[j] = line[i];
+        i++;
+    }
+    (*offset_y) = atoi(temp);
+
+}
+
+void macroblockManager::inverse_transofrm() {
+    //FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
+    //dumpHeader(out);
+    //if (outDCT == NULL) {
+    //    printf("Failed to open %s\n", outDCT);
+    //    exit(1);
+    //}
+    for (int i = 0;i < macroBlocksX;i++) {
+        for (int j = 0;j < macroBlocksY;j++) {
+            macroblocks[j][i].inverse_transform(quantMatrix, qscale); // Make each macrobock to transform itself
+            //macroblocks[j][i].dump(out); // Make each macrobock to dump itself
+        }
+    }
+    //fclose(out);
+    return;
 
 }

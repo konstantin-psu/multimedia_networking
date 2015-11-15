@@ -70,6 +70,14 @@ public:
     void fillMacroblocks();
 
     void initMacroBlocks(dct *test);
+
+    void createMacroBlock(unsigned char *dctString, size_t start, size_t anEnd);
+
+    void readLine(unsigned char **src, unsigned char **dst);
+
+    void parseOffset(unsigned char *line, size_t *offset_x, size_t *offset_y);
+
+    void inverse_transofrm();
 };
 
 #endif //JPEG_DCT_MACROBLOCKMANAGER_H
