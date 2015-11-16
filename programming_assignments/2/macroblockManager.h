@@ -25,9 +25,8 @@
 #define BDIM 8
 
 #include "block.h"
-#include "pgmFileParser.h"
 #include "macroblock.h"
-#include "dct.h"
+#include "rawInput.h"
 
 
 /*
@@ -37,8 +36,7 @@ class macroblockManager {
 public:
     macroblockManager();
     ~macroblockManager();
-    void readAndDump(pgmFileParser *test); // Read pgmFileParser string and dump it to output file
-    void initMacroBlocks(pgmFileParser *test);
+    void PGMtoDCT(); // Read pgmFileParser string and dump it to output file
     macroblock **macroblocks;  //  Two dimensional array of macroblocks (the only thing here that needs to be deleted
     size_t macroBlocksX; // Number of macro blocks in X dim
     size_t macroBlocksY; // Number of macro blocks in Y dim
@@ -51,7 +49,7 @@ public:
     char * inDct;
     char * outPGM;
     char *quantFile;
-    dct  dctRaw;
+    rawInput inputObject;
 
     int quantMatrix[BDIM][BDIM]; // quantmatrix - aquired by parsing quantfile
 
@@ -59,17 +57,17 @@ public:
     void setOutFile(char *string);
     void parseQuantMatrix(char *string);
 
-    void init(char *qscale, char *quantfile, char *outputfile);
+    void initPGM(char *inputfile, char *quantfile, char *outputfile, char *qscale);
 
     void dumpHeader(FILE *pFILE);
 
     void init_dct(char *inputImage, char *quantfile, char *outputfile);
 
-    void parseAndDumpDCT();
+    void DCTtoPGM();
 
     void fillMacroblocks();
 
-    void initMacroBlocks(dct *test);
+    void initMacroBlocks(rawInput *test);
 
     void createMacroBlock(unsigned char *dctString, size_t start, size_t anEnd);
 

@@ -24,7 +24,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
-#include "pgmFileParser.h"
+#include "rawInput.h"
 
 
 /*
@@ -46,7 +46,7 @@ public:
     size_t y; // Real offset in y
 
     void quantize(int qmatrix[8][8], double qscale);
-    void parse(pgmFileParser *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x);
+    void parsePGM(rawInput *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x);
     void dump(FILE *outfile);
     void prettyPrint();
 

@@ -19,7 +19,6 @@
  * Copyright Info
  */
 #include <stdlib.h>
-#include "pgmFileParser.h"
 #include "macroblockManager.h"
 
 
@@ -30,22 +29,19 @@ int main(int args, char * argv []) {
     if (args != 5) { //Force correct number of args
         std::cout<<"Error: Invalid number of arguments\n"
                 "Usage:\n"
-                "   myDCT <pgm file full path> <quant file full path> <quantization float> <compressed file destination full path>\n";
+                "   myDCT <pgm file full path> <formatString file full path> <quantization float> <compressed file destination full path>\n";
         exit(1);
     }
     char * inputImage = argv[1];              // get pgm file path
-    char * quantfile = argv[2];               // get quant file path
+    char * quantfile = argv[2];               // get formatString file path
     char * qscale = argv[3];                  // get desired compression ratio
     char * outputFile = argv[4];              // get output file path
     macroblockManager mblocksManager;         // create macroblock manager
-    pgmFileParser * pgmInput = new pgmFileParser(); //create pgm parser
 
 
-    pgmInput->readInput(inputImage);                     // Parse pgm file
-    mblocksManager.init(qscale, quantfile, outputFile);  // Init macroblock manager
+    mblocksManager.initPGM(inputImage, quantfile, outputFile, qscale);  // Init macroblock manager
 
-    mblocksManager.readAndDump(pgmInput);                // Read, transform and dump PGM
-    delete(pgmInput);                                    // Don't forget to deallocate memory
+    mblocksManager.PGMtoDCT();                // Read, transform and dump PGM
     return 0;
 }
 

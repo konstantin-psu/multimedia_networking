@@ -30,15 +30,15 @@ int main(int args, char * argv []) {
     if (args != 4) { //Force correct number of args
         std::cout<<"Error: Invalid number of arguments\n"
                 "Usage:\n"
-                "   myIDCT <input image full path> <quant file full path> <output file>\n";
+                "   myIDCT <input image full path> <formatString file full path> <output file>\n";
         exit(1);
     }
-    char * inputImage = argv[1];              // get pgm file path
-    char * quantfile = argv[2];               // get quant file path
+    char * inputImage = argv[1];              // get rawInput file path
+    char * quantfile = argv[2];               // get formatString file path
     char * outputFile = argv[3];              // get output file path
     macroblockManager manager;
     manager.init_dct(inputImage,quantfile, outputFile);
-    manager.parseAndDumpDCT();
+    manager.DCTtoPGM();
     return 0;
 }
 

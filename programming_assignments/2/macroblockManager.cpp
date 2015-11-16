@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include "pgmFileParser.h"
 #include "macroblockManager.h"
 
 
@@ -57,15 +56,15 @@ macroblockManager::~macroblockManager() {
 /*
  * Read pgm and dump DCT
  */
-void macroblockManager::readAndDump(pgmFileParser *test) {
-    macroBlocksX = test->macroblocksX;
-    macroBlocksY = test->macroblocksY;
-    x = test->xDim;
-    y = test->yDim;
-    initMacroBlocks(test);
-    for (size_t i =0; i < test->macroblocksX; i++) {
-        for (size_t j =0; j < test->macroblocksY; j++) {
-            macroblocks[j][i].parse(test, j,i, x); // Let each macroblock to parse it's own part
+void macroblockManager::PGMtoDCT() {
+    macroBlocksX = inputObject.macroblocksX;
+    macroBlocksY = inputObject.macroblocksY;
+    x = inputObject.xDim;
+    y = inputObject.yDim;
+    initMacroBlocks(&inputObject);
+    for (size_t i =0; i < inputObject.macroblocksX; i++) {
+        for (size_t j =0; j < inputObject.macroblocksY; j++) {
+            macroblocks[j][i].parse(&inputObject, j,i, x); // Let each macroblock to parsePGM it's own part
         }
 
     }
@@ -76,14 +75,8 @@ void macroblockManager::readAndDump(pgmFileParser *test) {
 /*
  * Allocate macroblocks
  */
-void macroblockManager::initMacroBlocks(pgmFileParser *test) {
-    this->macroblocks = new macroblock * [test->macroblocksX];
-    for (int i = 0;i< test->macroblocksX;i++) {
-        macroblocks[i] = new macroblock [test->macroblocksY];
-    }
-}
 
-void macroblockManager::initMacroBlocks(dct *test) {
+void macroblockManager::initMacroBlocks(rawInput *test) {
     this->macroblocks = new macroblock * [test->macroblocksX];
     for (int i = 0;i< test->macroblocksX;i++) {
         macroblocks[i] = new macroblock [test->macroblocksY];
@@ -180,15 +173,15 @@ void macroblockManager::parseQuantMatrix(char *string) {
 /*
  * Initialize object
  */
-void macroblockManager::init(char *qscale, char *quantfile, char *outputfile) {
+void macroblockManager::initPGM(char *inputfile, char *quantfile, char *outputfile, char *qscale) {
     setScale(qscale);
     parseQuantMatrix(quantfile);
     setOutFile(outputfile);
-
+    inputObject.readInput(inputfile);
 }
 
 /*
- * Dump dct header
+ * Dump rawInput header
  */
 void macroblockManager::dumpHeader(FILE *pFILE) {
     fprintf(pFILE, "%s\n", "MYDCT");
@@ -202,33 +195,31 @@ void macroblockManager::init_dct(char *inputImage, char *quantfile, char *output
     this->outPGM = outputfile;
 }
 
-void macroblockManager::parseAndDumpDCT() {
+void macroblockManager::DCTtoPGM() {
     parseQuantMatrix(quantFile);
-    dctRaw.readInput(inDct);
-    macroBlocksX = dctRaw.macroblocksX;
-    macroBlocksY = dctRaw.macroblocksY;
-    qscale = dctRaw.quantization;
+    inputObject.readInput(inDct);
+    macroBlocksX = inputObject.macroblocksX;
+    macroBlocksY = inputObject.macroblocksY;
+    qscale = atof(inputObject.formatString);
     fillMacroblocks();
     inverse_transofrm();
     return;
 }
 
 void macroblockManager::fillMacroblocks() {
-    unsigned char * dctString = dctRaw.rawString;
-    unsigned char * currentMblock = dctRaw.rawString;
+    unsigned char * dctString = inputObject.rawString;
 
     size_t mBlock_start = 0;
     size_t mBlock_end = 0;
-    initMacroBlocks(&dctRaw);
+    initMacroBlocks(&inputObject);
     size_t count = 0;
-    size_t b_end = 9;
 
 
     /*
      * TODO remove this:
      * Find
      */
-    for (size_t pos = 0; pos < dctRaw.rawStringSize; pos++) {
+    for (size_t pos = 0; pos < inputObject.rawStringSize; pos++) {
         if (dctString[pos] == 0) { break;}
         else if (dctString[pos] == 10) {
             if (count == 8) {
@@ -243,7 +234,7 @@ void macroblockManager::fillMacroblocks() {
         }
 
     }
-    printf("test");//TODO delete me
+    //printf("test");//TODO delete me
 
 }
 

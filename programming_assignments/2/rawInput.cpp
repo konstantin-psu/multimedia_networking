@@ -23,18 +23,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include "dct.h"
+#include "rawInput.h"
 
 /*
- * implementation of dct class
+ * implementation of rawInput class
  */
 
 /*
  * Default constructor
  * Set everything to 0
  */
-dct::dct() {
-    memset(this->quant,0,20);
+rawInput::rawInput() {
+    memset(this->formatString,0,20);
     memset(this->header,0,20);
     this->xDim = 0;
     this->yDim = 0;
@@ -50,7 +50,7 @@ dct::dct() {
  * Default destructor
  * rawString is the only thing needs to be cleaned up
  */
-dct::~dct() {
+rawInput::~rawInput() {
     if (this->rawString != NULL) {
         free(this->rawString);
     }
@@ -59,7 +59,7 @@ dct::~dct() {
 /*
  * Allocate rawString
  */
-void dct::init(size_t rawSize) {
+void rawInput::init(size_t rawSize) {
     this->rawString = (unsigned char*) malloc(rawSize);
     memset(this->rawString, 0, rawSize);
 }
@@ -68,7 +68,7 @@ void dct::init(size_t rawSize) {
 /*
  * Read input file
  */
-void dct::readInput(char *fname) {
+void rawInput::readInput(char *fname) {
     FILE * p = fopen(fname, "rb"); // Open file with reading permission
     if (p == NULL) {
         printf("Failed to open %s\n", fname);
@@ -101,9 +101,8 @@ void dct::readInput(char *fname) {
     this->macroblocksY = this->yDim/16;
 
 
-    fgets(this->quant,20,p); // Skip 255 line
+    fgets(this->formatString,20,p); // Skip 255 line
     size_t sz = ftell(p);
-    quantization = atof(quant);
 
     size_t encodedLineSize = totSize - sz;
     fread(this->rawString, encodedLineSize, 1, p); // Read encoded part in binary.
