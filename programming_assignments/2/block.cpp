@@ -64,27 +64,27 @@ void block::dct() {
     double sqr = 1.0/sqrt(2.0);
     double coef = 0.0;
 
-    for (int u = 0 ;u < BDIM;u++) {
-            if (u == 0) {
-                C_u = sqr;
-            } else {
-                C_u = 1.0;
-            }
-        for (int v = 0 ;v < BDIM;v++) {
+    for (int v = 0 ; v < BDIM; v++) {
             if (v == 0) {
                 C_v = sqr;
             } else {
                 C_v = 1.0;
             }
+        for (int u = 0 ; u < BDIM; u++) {
+            if (u == 0) {
+                C_u = sqr;
+            } else {
+                C_u = 1.0;
+            }
             coef = (C_u/2.0)  * (C_v/2.0);
             double sum = 0;
-            for (int x = 0; x< BDIM; x++) {
-                for (int y = 0; y< BDIM; y++) {
-                    sum += (double)items[y][x]*cos(((double)(2*y+1)*(double)v*M_PI)/16.0)*cos(((double)(2*x+1)*(double)u*M_PI)/16.0);
+            for (int y = 0; y < BDIM; y++) {
+                for (int x = 0; x < BDIM; x++) {
+                    sum += (double)items[x][y]*cos(((double)(2* x +1)*(double) u *M_PI)/16.0)*cos(((double)(2* y +1)*(double) v *M_PI)/16.0);
                 }
 
             }
-            transofrmed[v][u] = coef * sum;
+            transofrmed[u][v] = coef * sum;
         }
     }
     return;
@@ -160,7 +160,7 @@ void block::prettyPrintc() {
     std::cout<<x<<" "<<y<<std::endl;
     for (int i = 0;i<8;i++) {
         for (int j = 0;j<8;j++) {
-            printf("%5d", items[j][i]);
+            printf("%5x", items[j][i]);
         }
         std::cout<<std::endl;
     }
@@ -245,7 +245,7 @@ void block::fill(unsigned char *block, size_t b_oofset_x, size_t b_offset_y) {
             index++;
         }
     }
-    printf("test"); //TODO remove me
+//    printf("test"); //TODO remove me
 
 }
 
@@ -267,8 +267,8 @@ void block::inverse_dct() {
     double sqr = 1.0/sqrt(2.0);
     double coef = 0.0;
 
-    for (int x = 0 ;x < BDIM;x++) {
-        for (int y = 0 ;y < BDIM;y++) {
+    for (int y = 0 ; y < BDIM; y++) {
+        for (int x = 0 ; x < BDIM; x++) {
             double sum = 0;
             for (int u = 0; u< BDIM; u++) {
                 if (u == 0) {
@@ -282,18 +282,29 @@ void block::inverse_dct() {
                     } else {
                         C_v = 1.0;
                     }
-                    coef = (C_u/2.0)  * (C_v/2.0);
-                    sum += coef * transofrmed[v][u] *cos(((double)(2*x+1)*(double)u*M_PI)/16.0)*cos(((double)(2*y+1)*(double)v*M_PI)/16.0);
+                    coef = C_u * C_v;
+                    sum += coef * transofrmed[v][u] *cos(((double)(2* y +1)*(double)u*M_PI)/16.0)*cos(((double)(2* x +1)*(double)v*M_PI)/16.0);
                 }
 
             }
+            sum = sum/4.0;
             if (sum < 0) {
                 sum = 0;
             } else if (sum > 255) {
                 sum = 255;
             }
-            items[y][x] = (char)sum;
+            items[x][y] = (unsigned char)sum;
         }
     }
     return;
+}
+
+void block::gatherPGM(unsigned char *pgmContainer, size_t totalX) {
+    int realIndex = 0;
+    for (int yl = 0; yl <BDIM; yl++) {
+        for (int xl = 0; xl < BDIM; xl++) {
+            realIndex = xl + x + (y + yl) *totalX;
+            pgmContainer[realIndex] = items[xl][yl];
+        }
+    }
 }

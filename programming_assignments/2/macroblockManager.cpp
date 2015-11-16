@@ -38,6 +38,7 @@ macroblockManager::macroblockManager() {
     macroblocks = NULL;
     macroBlocksX = 0;
     macroBlocksY = 0;
+    pgmFormattedOutput = NULL;
 }
 
 
@@ -51,6 +52,7 @@ macroblockManager::~macroblockManager() {
         }
         delete macroblocks;
     }
+    if (pgmFormattedOutput != NULL) { delete pgmFormattedOutput;}
 }
 
 /*
@@ -91,7 +93,7 @@ void macroblockManager::transform() {
     //std::cout<<x<<" "<<y<<"\n";
     //std::cout<<qscale<<"\n";
     FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
-    dumpHeader(out);
+    WriteDCTheaderTo(out);
     if (outDCT == NULL) {
         printf("Failed to open %s\n", outDCT);
         exit(1);
@@ -163,11 +165,7 @@ void macroblockManager::parseQuantMatrix(char *string) {
         std::cout<<"Error: quantfile expected to have 8 columns and 8 rows\n";
         exit(1);
     }
-
-
-
     fclose(p);
-
 }
 
 /*
@@ -183,13 +181,19 @@ void macroblockManager::initPGM(char *inputfile, char *quantfile, char *outputfi
 /*
  * Dump rawInput header
  */
-void macroblockManager::dumpHeader(FILE *pFILE) {
+void macroblockManager::WriteDCTheaderTo(FILE *pFILE) {
     fprintf(pFILE, "%s\n", "MYDCT");
     fprintf(pFILE, "%lu %lu\n", x, y);
     fprintf(pFILE, "%f\n", qscale);
 }
 
-void macroblockManager::init_dct(char *inputImage, char *quantfile, char *outputfile) {
+void macroblockManager::WritePGMheaderTo(FILE *pFILE) {
+    fprintf(pFILE, "%s\n", "P5");
+    fprintf(pFILE, "%lu %lu\n", x, y);
+    fprintf(pFILE, "%d\n", 255);
+}
+
+void macroblockManager::initDct(char *inputImage, char *quantfile, char *outputfile) {
     inDct = inputImage;
     this->quantFile = quantfile;
     this->outPGM = outputfile;
@@ -199,19 +203,24 @@ void macroblockManager::DCTtoPGM() {
     parseQuantMatrix(quantFile);
     inputObject.readInput(inDct);
     macroBlocksX = inputObject.macroblocksX;
+    printf("%s", inputObject.rawString);
     macroBlocksY = inputObject.macroblocksY;
+    x = inputObject.xDim;
+    y = inputObject.yDim;
     qscale = atof(inputObject.formatString);
-    fillMacroblocks();
-    inverse_transofrm();
+    fillMacroblocksFromDCT();
+    inverseTransofrm();
     return;
 }
 
-void macroblockManager::fillMacroblocks() {
+void macroblockManager::fillMacroblocksFromDCT() {
     unsigned char * dctString = inputObject.rawString;
 
     size_t mBlock_start = 0;
     size_t mBlock_end = 0;
     initMacroBlocks(&inputObject);
+    pgmFormattedOutput = new unsigned char[macroBlocksX * macroBlocksY * 16 * 16 + 1];
+    memset(pgmFormattedOutput,0,macroBlocksX * macroBlocksY * 16 * 16 + 1);
     size_t count = 0;
 
 
@@ -250,7 +259,7 @@ void macroblockManager::createMacroBlock(unsigned char *dctString, size_t start,
     size_t macroblock_offset_x = offset_x/16;
     size_t macroblock_offset_y = offset_y/16;
     macroblocks[macroblock_offset_x][macroblock_offset_y].fill_block(cblock,offset_x,offset_y);
-    printf("pause");
+//    printf("pause");
     delete(line);
 }
 
@@ -285,9 +294,9 @@ void macroblockManager::parseOffset(unsigned char *line, size_t *offset_x, size_
 
 }
 
-void macroblockManager::inverse_transofrm() {
+void macroblockManager::inverseTransofrm() {
     //FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
-    //dumpHeader(out);
+    //WriteDCTheaderTo(out);
     //if (outDCT == NULL) {
     //    printf("Failed to open %s\n", outDCT);
     //    exit(1);
@@ -298,7 +307,23 @@ void macroblockManager::inverse_transofrm() {
             //macroblocks[j][i].dump(out); // Make each macrobock to dumpToPGM itself
         }
     }
+    gatherPGMResults();
     //fclose(out);
+    return;
+
+}
+
+void macroblockManager::gatherPGMResults() {
+    for (int i = 0;i < macroBlocksX;i++) {
+        for (int j = 0;j < macroBlocksY;j++) {
+            macroblocks[j][i].gatherPGMtoString(pgmFormattedOutput, x);
+        }
+    }
+    FILE * out = fopen(outPGM, "wb"); // Open out file with write permissions (file will be overwritten)
+    WritePGMheaderTo(out);
+    fwrite(pgmFormattedOutput, macroBlocksX * macroBlocksY * 16 * 16,1,out);
+    fclose(out);
+
     return;
 
 }

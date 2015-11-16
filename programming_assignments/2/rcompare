@@ -1,0 +1,4 @@
+#!/bin/bash
+./myDCT tests/0/test0.pgm ./quantfile 1.0 outTest0
+
+./myIDCT tests/0/test0.1.0.dct ./quantfile outTest0IDCT.pgm

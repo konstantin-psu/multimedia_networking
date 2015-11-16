@@ -37,7 +37,7 @@ int main(int args, char * argv []) {
     char * quantfile = argv[2];               // get formatString file path
     char * outputFile = argv[3];              // get output file path
     macroblockManager manager;
-    manager.init_dct(inputImage,quantfile, outputFile);
+    manager.initDct(inputImage, quantfile, outputFile);
     manager.DCTtoPGM();
     return 0;
 }

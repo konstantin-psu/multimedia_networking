@@ -48,7 +48,8 @@ public:
     char *outDCT;
     char * inDct;
     char * outPGM;
-    char *quantFile;
+    unsigned char * pgmFormattedOutput;
+    char * quantFile;
     rawInput inputObject;
 
     int quantMatrix[BDIM][BDIM]; // quantmatrix - aquired by parsing quantfile
@@ -59,13 +60,17 @@ public:
 
     void initPGM(char *inputfile, char *quantfile, char *outputfile, char *qscale);
 
-    void dumpHeader(FILE *pFILE);
+    void WriteDCTheaderTo(FILE *pFILE);
+    void WritePGMheaderTo(FILE *pFILE);
 
-    void init_dct(char *inputImage, char *quantfile, char *outputfile);
+    void gatherPGMResults();
+
+
+    void initDct(char *inputImage, char *quantfile, char *outputfile);
 
     void DCTtoPGM();
 
-    void fillMacroblocks();
+    void fillMacroblocksFromDCT();
 
     void initMacroBlocks(rawInput *test);
 
@@ -75,7 +80,7 @@ public:
 
     void parseOffset(unsigned char *line, size_t *offset_x, size_t *offset_y);
 
-    void inverse_transofrm();
+    void inverseTransofrm();
 };
 
 #endif //JPEG_DCT_MACROBLOCKMANAGER_H

@@ -44,6 +44,8 @@ public:
     void fill_block(unsigned char *block, size_t b_offset_x, size_t b_offset_y);
 
     void inverse_transform(int quantMarix[8][8], double qscale);
+
+    void gatherPGMtoString(unsigned char *pgmOutPutContainer, size_t totalX);
 };
 
 #endif //JPEG_DCT_MACROBLOCK_H

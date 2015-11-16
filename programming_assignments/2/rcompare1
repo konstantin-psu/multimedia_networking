@@ -1,0 +1,8 @@
+#!/bin/bash
+./myDCT tests/1/test1.pgm ./quantfile 1.0 outTest1
+
+./myIDCT tests/1/test1.1.0.dct ./quantfile outTest1IDCT.pgm
+
+xxd -p tests/1/test1.pgm
+echo ""
+xxd -p outTest1IDCT.pgm 

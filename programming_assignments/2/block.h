@@ -60,6 +60,8 @@ public:
     void prettyPrintq();
     void prettyPrintt();
     void prettyPrintc();
+
+    void gatherPGM(unsigned char *pgmContainer, size_t totalX);
 };
 
 #endif //JPEG_DCT_BLOCK_H
