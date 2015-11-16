@@ -54,7 +54,7 @@ macroblockManager::~macroblockManager() {
 }
 
 /*
- * Read pgm and dump DCT
+ * Read pgm and dumpToPGM DCT
  */
 void macroblockManager::PGMtoDCT() {
     macroBlocksX = inputObject.macroblocksX;
@@ -84,7 +84,7 @@ void macroblockManager::initMacroBlocks(rawInput *test) {
 }
 
 /*
- * Transform and dump
+ * Transform and dumpToPGM
  */
 void macroblockManager::transform() {
     //std::cout<<"MYDCT\n";
@@ -99,7 +99,7 @@ void macroblockManager::transform() {
     for (int i = 0;i < macroBlocksX;i++) {
         for (int j = 0;j < macroBlocksY;j++) {
             macroblocks[j][i].transform(quantMatrix, qscale); // Make each macrobock to transform itself
-            macroblocks[j][i].dump(out); // Make each macrobock to dump itself
+            macroblocks[j][i].dump(out); // Make each macrobock to dumpToPGM itself
         }
     }
     fclose(out);
@@ -295,7 +295,7 @@ void macroblockManager::inverse_transofrm() {
     for (int i = 0;i < macroBlocksX;i++) {
         for (int j = 0;j < macroBlocksY;j++) {
             macroblocks[j][i].inverse_transform(quantMatrix, qscale); // Make each macrobock to transform itself
-            //macroblocks[j][i].dump(out); // Make each macrobock to dump itself
+            //macroblocks[j][i].dump(out); // Make each macrobock to dumpToPGM itself
         }
     }
     //fclose(out);

@@ -34,7 +34,7 @@ class block {
 public:
     block(); // Default constructor
     void dct(); // Dct transform itself
-    void zigzag(); // Zig zag transform itself
+    void zigzag(bool inversed); // Zig zag transform itself
     void setIndex(size_t x, size_t y); // Set offset
     unsigned char items [8][8]; // Raw items in pgm
     double transofrmed [8][8];  // DCT transformed items
@@ -47,17 +47,15 @@ public:
 
     void quantize(int qmatrix[8][8], double qscale);
     void parsePGM(rawInput *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x);
-    void dump(FILE *outfile);
-    void prettyPrint();
+    void dumpToPGM(FILE *outfile);
 
     void fill(unsigned char *block, size_t b_oofset_x, size_t b_offset_y);
-
-    void inverse_zigzag();
 
     void inverse_quantize(int quantMatrix[8][8], double qscale);
 
     void inverse_dct();
 
+    void prettyPrint();
     void prettyPrintr();
     void prettyPrintq();
     void prettyPrintt();

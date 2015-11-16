@@ -34,7 +34,7 @@ void macroblock::transform(int quantMatrix [BLOCK_SIZE][BLOCK_SIZE], double qsca
             blocks[x][y].prettyPrintc(); // TODO: remove
             blocks[x][y].dct();
             blocks[x][y].quantize(quantMatrix, qscale);
-            blocks[x][y].zigzag();
+            blocks[x][y].zigzag(false);
         }
     }
     return;
@@ -63,7 +63,7 @@ void macroblock::parse(rawInput *pEncoded, size_t mb_ind_x, size_t mb_ind_y, siz
 void macroblock::dump(FILE *outfile) {
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
-            blocks[x][y].dump(outfile); // Let each block dump its part.
+            blocks[x][y].dumpToPGM(outfile); // Let each block dumpToPGM its part.
         }
     }
 }
@@ -91,7 +91,7 @@ void macroblock::fill_block(unsigned char *block, size_t b_offset_x, size_t b_of
 //                    temp_index++;
 //                } else {
 //                    if (temp_index != 0) {
-//                        blocks[x][y].dump(outfile); // Let each block dump its part.
+//                        blocks[x][y].dump(outfile); // Let each block dumpToPGM its part.
 //                    }
 //                    temp_index = 0;
 //                }
@@ -104,9 +104,10 @@ void macroblock::fill_block(unsigned char *block, size_t b_offset_x, size_t b_of
 }
 
 void macroblock::inverse_transform(int quantMatrix[8][8], double qscale) {
+    bool inversed = true;
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
-            blocks[x][y].inverse_zigzag();
+            blocks[x][y].zigzag(inversed);
             blocks[x][y].inverse_quantize(quantMatrix, qscale);
             blocks[x][y].inverse_dct();
             blocks[x][y].prettyPrintc(); // TODO: remove

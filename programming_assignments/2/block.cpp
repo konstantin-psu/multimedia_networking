@@ -93,7 +93,7 @@ void block::dct() {
 /*
  * Zigzag reorder
  */
-void block::zigzag() {
+void block::zigzag(bool inversed) {
     int m = 8;
     int y =0, x =0;
     int c =0, r =0; //row and column
@@ -107,11 +107,9 @@ void block::zigzag() {
             res = (i & 1) ? j * (m - 1) + i : (i - j) * m + j;
             c = res / 8;
             r = res - c * 8;
-            reordered[x][y] = quantized[r][c];
+            inversed ? quantized[r][c] = reordered[x][y] : reordered[x][y] = quantized[r][c];
         }
     }
-
-
 }
 
 /*
@@ -202,7 +200,7 @@ void block::parsePGM(rawInput *pEncoded, size_t macroblock_offset_x, size_t macr
 
 }
 
-void block::dump(FILE *outfile) {
+void block::dumpToPGM(FILE *outfile) {
     fprintf(outfile, "%lu %lu\n", x, y);
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -251,25 +249,6 @@ void block::fill(unsigned char *block, size_t b_oofset_x, size_t b_offset_y) {
 
 }
 
-void block::inverse_zigzag() {
-    int m = 8;
-    int y =0, x =0;
-    int c =0, r =0; //row and column
-    int res=0;
-    int n = 0;
-    for (int i = 0; i < m * 2; i++) {
-        for (int j = (i < m) ? 0 : i - m + 1; j <= i && j < m; j++) {
-            y = n / 8;
-            x = n - y * 8;
-            n++;
-            res = (i & 1) ? j * (m - 1) + i : (i - j) * m + j;
-            c = res / 8;
-            r = res - c * 8;
-            quantized[r][c] = reordered[x][y];
-        }
-    }
-
-}
 
 void block::inverse_quantize(int (*quantMatrix)[8], double qscale) {
     for (int x= 0;x<BDIM;x++) {
