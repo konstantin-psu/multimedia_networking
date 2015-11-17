@@ -93,3 +93,5 @@ app_exe
 *.synctex.gz
 
 
+myDCT
+myIDCT
