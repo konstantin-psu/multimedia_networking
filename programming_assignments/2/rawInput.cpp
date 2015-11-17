@@ -86,11 +86,31 @@ void rawInput::readInput(char *fname) {
     memset(line, 0, 100);
     fgets(this->header,20,p); // Read header
     fgets(line,100,p); // Read dimensions
-    line[strlen(line) - 1] = 0;
-    char * dim;
-    dim = strtok (line," "); //Convert dimensions to Int
+    char dim[100];
+    memset(dim, 0, 100);
+
+    int dimInd = 0;
+    int dimI = 0;
+    while(line[dimInd] == 32) {
+        dimInd++;
+    }
+    while(line[dimInd] != 32) {
+        dim[dimI] = line[dimInd];
+        dimI++;
+        dimInd++;
+    }
+    dimI=0;
     this->xDim = atoi(dim);
-    dim = strtok (line," ");
+    memset(dim, 0, 100);
+
+    while(line[dimInd] == 32) {
+        dimInd++;
+    }
+    while(line[dimInd] != 10) {
+        dim[dimI] = line[dimInd];
+        dimI++;
+        dimInd++;
+    }
     this->yDim = atoi(dim);
 
     if (xDim % 16 != 0 || yDim % 16 != 0)  {

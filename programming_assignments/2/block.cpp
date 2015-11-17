@@ -188,12 +188,14 @@ void block::parsePGM(rawInput *pEncoded, size_t macroblock_offset_x, size_t macr
      size_t index=0;
      size_t loc_x = 0;
      size_t loc_y = 0;
+    unsigned char t;
     for (size_t row = 0; row < BDIM; row++) {
         loc_y = (y + row) * total_x;
         for (size_t column = 0; column < BDIM; column++) {
             loc_x = x + column;
             index = loc_x + loc_y;
-            items[column][row] = pEncoded->rawString[index];
+            t = pEncoded->rawString[index];
+            items[column][row] = t;
         }
 
     }

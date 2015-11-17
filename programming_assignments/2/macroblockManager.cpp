@@ -64,8 +64,8 @@ void macroblockManager::PGMtoDCT() {
     x = inputObject.xDim;
     y = inputObject.yDim;
     initMacroBlocks(&inputObject);
-    for (size_t i =0; i < inputObject.macroblocksX; i++) {
-        for (size_t j =0; j < inputObject.macroblocksY; j++) {
+    for (size_t i =0; i < inputObject.macroblocksY; i++) {
+        for (size_t j =0; j < inputObject.macroblocksX; j++) {
             macroblocks[j][i].parse(&inputObject, j,i, x); // Let each macroblock to parsePGM it's own part
         }
 
@@ -98,8 +98,8 @@ void macroblockManager::transform() {
         printf("Failed to open %s\n", outDCT);
         exit(1);
     }
-    for (int i = 0;i < macroBlocksX;i++) {
-        for (int j = 0;j < macroBlocksY;j++) {
+    for (int i = 0;i < macroBlocksY;i++) {
+        for (int j = 0;j < macroBlocksX;j++) {
             macroblocks[j][i].transform(quantMatrix, qscale); // Make each macrobock to transform itself
             macroblocks[j][i].dump(out); // Make each macrobock to dumpToPGM itself
         }
@@ -312,8 +312,8 @@ void macroblockManager::inverseTransofrm() {
     //    printf("Failed to open %s\n", outDCT);
     //    exit(1);
     //}
-    for (int i = 0;i < macroBlocksX;i++) {
-        for (int j = 0;j < macroBlocksY;j++) {
+    for (int i = 0;i < macroBlocksY;i++) {
+        for (int j = 0;j < macroBlocksX;j++) {
             macroblocks[j][i].inverse_transform(quantMatrix, qscale); // Make each macrobock to transform itself
             //macroblocks[j][i].dump(out); // Make each macrobock to dumpToPGM itself
         }
@@ -325,8 +325,8 @@ void macroblockManager::inverseTransofrm() {
 }
 
 void macroblockManager::gatherPGMResults() {
-    for (int i = 0;i < macroBlocksX;i++) {
-        for (int j = 0;j < macroBlocksY;j++) {
+    for (int i = 0;i < macroBlocksY;i++) {
+        for (int j = 0;j < macroBlocksX;j++) {
             macroblocks[j][i].gatherPGMtoString(pgmFormattedOutput, x);
         }
     }

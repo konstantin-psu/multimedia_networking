@@ -1,3 +1,0 @@
-#!/bin/bash
-
-giftopnm $1 | ppmtopgm >| $2
