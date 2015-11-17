@@ -47,7 +47,7 @@ macroblockManager::macroblockManager() {
  */
 macroblockManager::~macroblockManager() {
     if (macroblocks != NULL) {
-        for (int i=0; i< macroBlocksX;i++) {
+        for (size_t i=0; i< macroBlocksX;i++) {
             delete macroblocks[i];
         }
         delete macroblocks;
@@ -80,7 +80,7 @@ void macroblockManager::PGMtoDCT() {
 
 void macroblockManager::initMacroBlocks(rawInput *test) {
     this->macroblocks = new macroblock * [test->macroblocksX];
-    for (int i = 0;i< test->macroblocksX;i++) {
+    for (size_t i = 0;i< test->macroblocksX;i++) {
         macroblocks[i] = new macroblock [test->macroblocksY];
     }
 }
@@ -89,17 +89,14 @@ void macroblockManager::initMacroBlocks(rawInput *test) {
  * Transform and dumpToDCT
  */
 void macroblockManager::transform() {
-    //std::cout<<"MYDCT\n";
-    //std::cout<<x<<" "<<y<<"\n";
-    //std::cout<<qscale<<"\n";
     FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
     WriteDCTheaderTo(out);
     if (outDCT == NULL) {
         printf("Failed to open %s\n", outDCT);
         exit(1);
     }
-    for (int i = 0;i < macroBlocksY;i++) {
-        for (int j = 0;j < macroBlocksX;j++) {
+    for (size_t i = 0;i < macroBlocksY;i++) {
+        for (size_t j = 0;j < macroBlocksX;j++) {
             macroblocks[j][i].transform(quantMatrix, qscale); // Make each macrobock to transform itself
             macroblocks[j][i].dump(out); // Make each macrobock to dumpToDCT itself
         }
@@ -203,7 +200,6 @@ void macroblockManager::DCTtoPGM() {
     parseQuantMatrix(quantFile);
     inputObject.readInput(inDct);
     macroBlocksX = inputObject.macroblocksX;
-//    printf("%s", inputObject.rawString);
     macroBlocksY = inputObject.macroblocksY;
     x = inputObject.xDim;
     y = inputObject.yDim;
@@ -223,11 +219,6 @@ void macroblockManager::fillMacroblocksFromDCT() {
     memset(pgmFormattedOutput,0,macroBlocksX * macroBlocksY * 16 * 16 + 1);
     size_t count = 0;
 
-
-    /*
-     * TODO remove this:
-     * Find
-     */
     for (size_t pos = 0; pos < inputObject.rawStringSize; pos++) {
         if (dctString[pos] == 0) { break;}
         else if (dctString[pos] == 10) {
@@ -243,8 +234,6 @@ void macroblockManager::fillMacroblocksFromDCT() {
         }
 
     }
-    //printf("test");//TODO delete me
-
 }
 
 void macroblockManager::createMacroBlock(unsigned char *dctString, size_t start, size_t anEnd) {
@@ -255,13 +244,10 @@ void macroblockManager::createMacroBlock(unsigned char *dctString, size_t start,
     size_t offset_y = 0;
     readLine(&cblock, &line);
 
-//    std::cout<<line<<std::endl; //TODO remove me
     parseOffset(line, &offset_x, &offset_y);
-//    std::cout<<offset_x<<" "<<offset_y<<std::endl; //TODO remove me
     size_t macroblock_offset_x = offset_x/16;
     size_t macroblock_offset_y = offset_y/16;
     macroblocks[macroblock_offset_x][macroblock_offset_y].fill_block(cblock,offset_x,offset_y);
-//    printf("pause");
     delete(line);
 }
 
@@ -306,27 +292,19 @@ void macroblockManager::parseOffset(unsigned char *line, size_t *offset_x, size_
 }
 
 void macroblockManager::inverseTransofrm() {
-    //FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
-    //WriteDCTheaderTo(out);
-    //if (outDCT == NULL) {
-    //    printf("Failed to open %s\n", outDCT);
-    //    exit(1);
-    //}
-    for (int i = 0;i < macroBlocksY;i++) {
-        for (int j = 0;j < macroBlocksX;j++) {
+    for (size_t i = 0;i < macroBlocksY;i++) {
+        for (size_t j = 0;j < macroBlocksX;j++) {
             macroblocks[j][i].inverse_transform(quantMatrix, qscale); // Make each macrobock to transform itself
-            //macroblocks[j][i].dump(out); // Make each macrobock to dumpToDCT itself
         }
     }
     gatherPGMResults();
-    //fclose(out);
     return;
 
 }
 
 void macroblockManager::gatherPGMResults() {
-    for (int i = 0;i < macroBlocksY;i++) {
-        for (int j = 0;j < macroBlocksX;j++) {
+    for (size_t i = 0;i < macroBlocksY;i++) {
+        for (size_t j = 0;j < macroBlocksX;j++) {
             macroblocks[j][i].gatherPGMtoString(pgmFormattedOutput, x);
         }
     }
