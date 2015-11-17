@@ -56,7 +56,7 @@ void block::setIndex(size_t x, size_t y) {
 
 
 /*
- * Dct transform (Just apply the given formula -- no optimizations
+ * Dct transform (Just apply the given formula, without optimizations
  */
 void block::dct() {
     double C_u = 0.0;
@@ -126,83 +126,43 @@ void block::quantize(int qmatrix [8][8], double qscale) {
             }
             val +=127;
             quantized[y][x] = val;
-
         }
-
-    }
-
-}
-
-/*
- * Pretty print the block (mostly for debugging purposes)
- */
-void block::prettyPrintq() {
-    std::cout<<x<<" "<<y<<std::endl;
-    for (int i = 0;i<8;i++) {
-        for (int j = 0;j<8;j++) {
-              std::cout<<"  "<<quantized[j][i];
-        }
-        std::cout<<std::endl;
-    }
-}
-
-void block::prettyPrintt() {
-    std::cout<<x<<" "<<y<<std::endl;
-    for (int i = 0;i<8;i++) {
-        for (int j = 0;j<8;j++) {
-            std::cout<<"  "<<transofrmed[j][i];
-        }
-        std::cout<<std::endl;
-    }
-}
-
-void block::prettyPrintc() {
-    std::cout<<x<<" "<<y<<std::endl;
-    for (int i = 0;i<8;i++) {
-        for (int j = 0;j<8;j++) {
-            printf("%5x", items[j][i]);
-        }
-        std::cout<<std::endl;
-    }
-}
-void block::prettyPrintr() {
-    std::cout<<x<<" "<<y<<std::endl;
-    for (int i = 0;i<8;i++) {
-        for (int j = 0;j<8;j++) {
-            std::cout<<"  "<<reordered[j][i];
-        }
-        std::cout<<std::endl;
     }
 }
 
 
 /*
- * parsePGM pgm into double array
+ * parsePGM pgm into double array, and further on transform to DCT
  */
 void block::parsePGM(rawInput *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y,
                      int block_offset_x, int block_offset_y, size_t total_x) {
 
 
+    // Set current block real offset
     setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);
 
-     size_t index=0;
-     size_t loc_x = 0;
-     size_t loc_y = 0;
-    unsigned char t;
+    size_t index=0;
+    size_t loc_x = 0;
+    size_t loc_y = 0;
+    // Need to translate two dimensional indexes to flat index of pgm file
     for (size_t row = 0; row < BDIM; row++) {
+        // y location
         loc_y = (y + row) * total_x;
         for (size_t column = 0; column < BDIM; column++) {
+            // x location
             loc_x = x + column;
+            // location in the PGM input
             index = loc_x + loc_y;
-            t = pEncoded->rawString[index];
-            items[column][row] = t;
+            items[column][row] = pEncoded->rawString[index];
         }
-
     }
-
 }
 
-void block::dumpToPGM(FILE *outfile) {
+
+/*
+ * Save this block to provided DCT file (used in DCT)
+ */
+void block::dumpToDCT(FILE *outfile) {
     fprintf(outfile, "%lu %lu\n", x, y);
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
@@ -212,8 +172,15 @@ void block::dumpToPGM(FILE *outfile) {
     }
 }
 
-void block::fill(unsigned char *block, size_t b_oofset_x, size_t b_offset_y) {
+/*
+ * Use dct formatted file to fill current block
+ */
+void block::fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y) {
 
+
+    /*
+     * Set current block offset
+     */
     x = b_oofset_x;
     y = b_offset_y;
 

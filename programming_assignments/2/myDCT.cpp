@@ -40,7 +40,7 @@ int main(int args, char * argv []) {
 
 
     mblocksManager.initPGM(inputImage, quantfile, outputFile, qscale);  // Init macroblock manager
-    mblocksManager.PGMtoDCT();                // Read, transform and dumpToPGM PGM
+    mblocksManager.PGMtoDCT();                // Read, transform and dumpToDCT PGM
     return 0;
 }
 

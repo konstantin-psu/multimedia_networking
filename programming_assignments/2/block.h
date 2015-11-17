@@ -47,9 +47,9 @@ public:
 
     void quantize(int qmatrix[8][8], double qscale);
     void parsePGM(rawInput *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x);
-    void dumpToPGM(FILE *outfile);
+    void dumpToDCT(FILE *outfile);
 
-    void fill(unsigned char *block, size_t b_oofset_x, size_t b_offset_y);
+    void fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y);
 
     void inverse_quantize(int quantMatrix[8][8], double qscale);
 

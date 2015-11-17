@@ -66,7 +66,7 @@ void macroblock::parse(rawInput *pEncoded, size_t mb_ind_x, size_t mb_ind_y, siz
 void macroblock::dump(FILE *outfile) {
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
-            blocks[x][y].dumpToPGM(outfile); // Let each block dumpToPGM its part.
+            blocks[x][y].dumpToDCT(outfile); // Let each block dumpToDCT its part.
         }
     }
 }
@@ -81,7 +81,7 @@ void macroblock::fill_block(unsigned char *block, size_t b_offset_x, size_t b_of
     size_t b_ind_x = (b_offset_x - mb_offset_x)/8;
     size_t b_ind_y = (b_offset_y - mb_offset_y)/8;
 //    std::cout<<b_offset_x<<" "<<b_offset_y<<std::endl;
-    blocks[b_ind_x][b_ind_y].fill(block, b_offset_x, b_offset_y);
+    blocks[b_ind_x][b_ind_y].fillFromDCT(block, b_offset_x, b_offset_y);
 }
 
 void macroblock::inverse_transform(int quantMatrix[8][8], double qscale) {

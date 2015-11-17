@@ -36,7 +36,7 @@ class macroblockManager {
 public:
     macroblockManager();
     ~macroblockManager();
-    void PGMtoDCT(); // Read pgmFileParser string and dumpToPGM it to output file
+    void PGMtoDCT(); // Read pgmFileParser string and dumpToDCT it to output file
     macroblock **macroblocks;  //  Two dimensional array of macroblocks (the only thing here that needs to be deleted
     size_t macroBlocksX; // Number of macro blocks in X dim
     size_t macroBlocksY; // Number of macro blocks in Y dim
