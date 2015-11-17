@@ -31,13 +31,9 @@
 void macroblock::transform(int quantMatrix [BLOCK_SIZE][BLOCK_SIZE], double qscale) {
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
-//            blocks[x][y].prettyPrintc(); // TODO: remove
             blocks[x][y].dct();
-//            blocks[x][y].prettyPrintt(); // TODO: remove
             blocks[x][y].quantize(quantMatrix, qscale);
-//            blocks[x][y].prettyPrintq(); // TODO: remove
             blocks[x][y].zigzag(false);
-//            blocks[x][y].prettyPrintr(); // TODO: remove
         }
     }
     return;
@@ -80,7 +76,6 @@ void macroblock::fill_block(unsigned char *block, size_t b_offset_x, size_t b_of
     this->offset_y = mb_offset_y;
     size_t b_ind_x = (b_offset_x - mb_offset_x)/8;
     size_t b_ind_y = (b_offset_y - mb_offset_y)/8;
-//    std::cout<<b_offset_x<<" "<<b_offset_y<<std::endl;
     blocks[b_ind_x][b_ind_y].fillFromDCT(block, b_offset_x, b_offset_y);
 }
 
@@ -88,13 +83,9 @@ void macroblock::inverse_transform(int quantMatrix[8][8], double qscale) {
     bool inversed = true;
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
-//            blocks[x][y].prettyPrintr(); // TODO: remove
             blocks[x][y].zigzag(inversed);
-//            blocks[x][y].prettyPrintq(); // TODO: remove
             blocks[x][y].inverse_quantize(quantMatrix, qscale);
-//            blocks[x][y].prettyPrintt(); // TODO: remove
             blocks[x][y].inverse_dct();
-//            blocks[x][y].prettyPrintc(); // TODO: remove
         }
     }
     return;

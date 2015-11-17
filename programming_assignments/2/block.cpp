@@ -214,8 +214,6 @@ void block::fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset
             index++;
         }
     }
-//    printf("test"); //TODO remove me
-
 }
 
 
