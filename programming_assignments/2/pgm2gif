@@ -1,0 +1,2 @@
+#!/bin/bash
+pgmtoppm 1,1,1 $1 | ppmtogif >| $2

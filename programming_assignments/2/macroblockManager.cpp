@@ -203,7 +203,7 @@ void macroblockManager::DCTtoPGM() {
     parseQuantMatrix(quantFile);
     inputObject.readInput(inDct);
     macroBlocksX = inputObject.macroblocksX;
-    printf("%s", inputObject.rawString);
+//    printf("%s", inputObject.rawString);
     macroBlocksY = inputObject.macroblocksY;
     x = inputObject.xDim;
     y = inputObject.yDim;
@@ -255,7 +255,9 @@ void macroblockManager::createMacroBlock(unsigned char *dctString, size_t start,
     size_t offset_y = 0;
     readLine(&cblock, &line);
 
+//    std::cout<<line<<std::endl; //TODO remove me
     parseOffset(line, &offset_x, &offset_y);
+//    std::cout<<offset_x<<" "<<offset_y<<std::endl; //TODO remove me
     size_t macroblock_offset_x = offset_x/16;
     size_t macroblock_offset_y = offset_y/16;
     macroblocks[macroblock_offset_x][macroblock_offset_y].fill_block(cblock,offset_x,offset_y);
@@ -280,15 +282,24 @@ void macroblockManager::parseOffset(unsigned char *line, size_t *offset_x, size_
     size_t j = 0;
     char temp [100];
     memset(temp,0,100);
+    while(line[i]==32) {
+        i++;
+    }
     while(line[i]!=32) {
         temp[j] = line[i];
         i++;
+        j++;
     }
     (*offset_x) = atoi(temp);
     j=0;
+    memset(temp,0,100);
+    while(line[i]==32) {
+        i++;
+    }
     while(line[i]!=0) {
         temp[j] = line[i];
         i++;
+        j++;
     }
     (*offset_y) = atoi(temp);
 
