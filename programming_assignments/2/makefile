@@ -19,7 +19,7 @@ myDCT: $(DCT) $(COMMON)
 	$(CC) $(CFLAGS) $(COMMON) $(DCT) -o myDCT
 
 myIDCT:  $(DCT) $(COMMON)
-	$(CC) $(CFLAGS) $(COMMON) $(DCT) -o myIDCT
+	$(CC) $(CFLAGS) $(COMMON) $(IDCT) -o myIDCT
 
 clean:
 	rm myDCT myIDCT

@@ -1,0 +1,17 @@
+#!/usr/bin/python
+import os
+import sys
+import glob
+import PIL
+from PIL import Image
+
+jpegs=glob.glob(sys.argv[1]+'/*.jpg')
+for i in jpegs:
+    img = Image.open(i)
+    hsize = img.size[1]/16 * 16
+    wsize = img.size[0]/16 * 16
+    print "width %d, height %d" % (wsize,hsize)
+    img = img.resize((wsize,hsize), PIL.Image.ANTIALIAS)
+    name = i.split('.')
+    img.save("." + name[1]+".gif")
+#print glob.glob('*.jpg')

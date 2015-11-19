@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd originals && ./run .
+cd ..
+mv originals/*.gif original_gifs/
+cd original_gifs && ./run
+cd ../origin_pgm && ./run
+cd ../dct && ./run
+cd ../pgm && ./run

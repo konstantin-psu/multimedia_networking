@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm converted/*.gif
+rm dct/*.dct
+rm original_gifs/*.gif
+rm origin_pgm/*.pgm  
+rm pgm/*.pgm

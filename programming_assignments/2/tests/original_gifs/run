@@ -1,0 +1,7 @@
+#!/bin/bash
+pgm='.pgm'
+for i in *.gif; do
+    j=`basename $i  .gif`
+    echo $j
+    giftopnm $i | ppmtopgm > "../origin_pgm/$j$pgm"
+done

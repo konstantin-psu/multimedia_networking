@@ -1,0 +1,21 @@
+#!/bin/bash
+
+pgm='.pgm'
+cd ../..
+myIDCT=`pwd`"/myIDCT"
+quantFile=`pwd`"/quantfile"
+cd -
+cd ..
+dctDir=`pwd`"/dct/"
+pgmDir=`pwd`"/pgm/"
+dct='.dct'
+qscale='1.0'
+dot='.'
+cd -
+
+for i in *.dct; do
+    j=`basename $i $dct`
+    outFile=$j$pgm
+    echo $j
+    $myIDCT `pwd`"/"$i $quantFile $pgmDir$outFile
+done

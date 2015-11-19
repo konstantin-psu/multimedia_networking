@@ -1,0 +1,25 @@
+#!/bin/bash
+
+pgm='.pgm'
+cd ../..
+myDCT=`pwd`"/myDCT"
+quantFile=`pwd`"/quantfile"
+cd -
+cd ..
+dctDir=`pwd`"/dct/"
+dct='.dct'
+qscale='1.0'
+dot='.'
+cd -
+
+for top in {1..5}; do
+    for ext in {0..9}; do
+        qscale="$top.$ext"
+        for i in *.pgm; do
+            j=`basename $i  .pgm`
+            outFile=$j$dot$qscale$dct
+            echo $j
+            $myDCT `pwd`"/"$i $quantFile $qscale $dctDir$outFile
+        done
+    done
+done
