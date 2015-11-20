@@ -29,7 +29,7 @@ int main(int args, char * argv []) {
     if (args != 5) { //Force correct number of args
         std::cout<<"Error: Invalid number of arguments\n"
                 "Usage:\n"
-                "   myDCT <pgm file full path> <formatString file full path> <quantization float> <compressed file destination full path>\n";
+                "   myDCT <.pgm input file full path> <quant file full path> <quantization float> <.dct out full path>\n";
         exit(1);
     }
     char * inputImage = argv[1];              // get pgm file path

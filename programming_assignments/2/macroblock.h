@@ -33,19 +33,18 @@
 class macroblock {
 public:
     block blocks [BLOCKS_DIM][BLOCKS_DIM]; // Each macroblock has fixed number of blocks
-    void transform(int qmatrix [BLOCK_SIZE][BLOCK_SIZE], double); // transofrm will apply rawInput, quantmatrix, and zigzag
+    void transform(int qmatrix [BLOCK_SIZE][BLOCK_SIZE], double); // transoform will apply rawInput, quantmatrix, and zigzag
     void dump(FILE *outfile); // dumpToDCT content to outDCT
     void parse(rawInput *pEncoded, size_t i, size_t i1, size_t max_x); // Parse corresponding pgm encoded string
 
     size_t offset_x; // Macroblock offset in X dim
     size_t offset_y; // Macroblock offset in Y dim
-    // Total size of file in X dim
 
-    void fill_block(unsigned char *block, size_t b_offset_x, size_t b_offset_y);
+    void fill_blockFromDCT(unsigned char *block, size_t b_offset_x, size_t b_offset_y); // Fill on of the block from DCT encoded string
 
-    void inverse_transform(int quantMarix[8][8], double qscale);
+    void inverse_transform(int quantMarix[8][8], double qscale); // Inverse transform each block in this macroblock
 
-    void gatherPGMtoString(unsigned char *pgmOutPutContainer, size_t totalX);
+    void gatherPGMtoString(unsigned char *pgmOutPutContainer, size_t totalX); // Gather pgm Encoded string from each block
 };
 
 #endif //JPEG_DCT_MACROBLOCK_H

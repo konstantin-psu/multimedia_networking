@@ -45,23 +45,17 @@ public:
     size_t x; // Real offset in x
     size_t y; // Real offset in y
 
-    void quantize(int qmatrix[8][8], double qscale);
-    void parsePGM(rawInput *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x);
-    void dumpToDCT(FILE *outfile);
+    void quantize(int qmatrix[8][8], double qscale); // Apply qmatrix and qscale to this block
+    void parsePGM(rawInput *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x); // parse pgm formatted string
+    void dumpToDCT(FILE *outfile); // Dump this block to outfile in dct format
 
-    void fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y);
+    void fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y); // parse dct formatted string
 
-    void inverse_quantize(int quantMatrix[8][8], double qscale);
+    void inverse_quantize(int quantMatrix[8][8], double qscale); // Reverse quantization
 
-    void inverse_dct();
+    void inverse_dct(); // Inverse dct
 
-    void prettyPrint();
-    void prettyPrintr();
-    void prettyPrintq();
-    void prettyPrintt();
-    void prettyPrintc();
-
-    void gatherPGM(unsigned char *pgmContainer, size_t totalX);
+    void gatherPGM(unsigned char *pgmContainer, size_t totalX);// Dump this block in pgm format into pgm formatted string
 };
 
 #endif //JPEG_DCT_BLOCK_H

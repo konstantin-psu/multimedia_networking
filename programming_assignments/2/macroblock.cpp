@@ -67,19 +67,33 @@ void macroblock::dump(FILE *outfile) {
     }
 }
 
-void macroblock::fill_block(unsigned char *block, size_t b_offset_x, size_t b_offset_y) {
+/*
+ * Fill block with b_offest_x, and b_offset_y
+ */
+void macroblock::fill_blockFromDCT(unsigned char *block, size_t b_offset_x, size_t b_offset_y) {
+    /*
+     * Need to figure out and save this macroblock offset
+     * and corresponding block index, since block offset is passed as real offset
+     */
+    // 1. Find and save this macroblock offset
     size_t mb_ind_x = b_offset_x/16;
     size_t mb_ind_y = b_offset_y/16;
     size_t mb_offset_x =mb_ind_x * 16;
     size_t mb_offset_y =mb_ind_y * 16;
     this->offset_x = mb_offset_x;
     this->offset_y = mb_offset_y;
+    // 2. Find corresponding block index and fill it
     size_t b_ind_x = (b_offset_x - mb_offset_x)/8;
     size_t b_ind_y = (b_offset_y - mb_offset_y)/8;
     blocks[b_ind_x][b_ind_y].fillFromDCT(block, b_offset_x, b_offset_y);
 }
 
+
+/*
+ * Inverse transform each block in this macroblock
+ */
 void macroblock::inverse_transform(int quantMatrix[8][8], double qscale) {
+    // Just loop through each block and apply required steps - reversed zigzag, quantize, dct
     bool inversed = true;
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
@@ -92,12 +106,16 @@ void macroblock::inverse_transform(int quantMatrix[8][8], double qscale) {
 
 }
 
+
+/*
+ * Gather pgm from each block in this macroblock
+ */
 void macroblock::gatherPGMtoString(unsigned char *pgmOutPutContainer, size_t totalX) {
+    // loop through each block, and fetch pgm encoded data
     for (int y = 0; y < BLOCKS_DIM; y++) {
         for (int x = 0; x < BLOCKS_DIM; x++) {
             blocks[x][y].gatherPGM(pgmOutPutContainer, totalX);
         }
     }
     return;
-
 }

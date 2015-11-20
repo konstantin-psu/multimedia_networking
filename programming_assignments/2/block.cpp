@@ -21,7 +21,6 @@
 
 #include "block.h"
 #include <math.h>
-#include <iostream>
 #include <string.h>
 #include <stdlib.h>
 
@@ -82,7 +81,6 @@ void block::dct() {
                 for (int x = 0; x < BDIM; x++) {
                     sum += (double)items[x][y]*cos(((double)(2* x +1)*(double) u *M_PI)/16.0)*cos(((double)(2* y +1)*(double) v *M_PI)/16.0);
                 }
-
             }
             transofrmed[u][v] = coef * sum;
         }
@@ -92,6 +90,7 @@ void block::dct() {
 
 /*
  * Zigzag reorder
+ *  if inversed true - then inversed prcess applied
  */
 void block::zigzag(bool inversed) {
     int m = 8;
@@ -116,23 +115,24 @@ void block::zigzag(bool inversed) {
  * Quantize the transformed array
  */
 void block::quantize(int qmatrix [8][8], double qscale) {
+    // quantize each element of the DCT transformed array
     for (int x= 0;x<BDIM;x++) {
         for (int y= 0;y<BDIM;y++) {
-            int val = (int)round( transofrmed[y][x] / ((double)qmatrix[x][y]*qscale));
+            int val = (int)round( transofrmed[y][x] / ((double)qmatrix[x][y]*qscale)); // apply qmatrix and qscale and round
             if (val < -127) {
                 val = -127;
             } else if (val > 128) {
                 val = 128;
             }
             val +=127;
-            quantized[y][x] = val;
+            quantized[y][x] = val; //save quantized value
         }
     }
 }
 
 
 /*
- * parsePGM pgm into double array, and further on transform to DCT
+ * parsePGM pgm formatted string into double array, and further on transform to DCT
  */
 void block::parsePGM(rawInput *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y,
                      int block_offset_x, int block_offset_y, size_t total_x) {
@@ -160,7 +160,7 @@ void block::parsePGM(rawInput *pEncoded, size_t macroblock_offset_x, size_t macr
 
 
 /*
- * Save this block to provided DCT file (used in DCT)
+ * Save this block to provided DCT output file (used in pgm -> DCT)
  */
 void block::dumpToDCT(FILE *outfile) {
     fprintf(outfile, "%lu %lu\n", x, y);
@@ -173,13 +173,13 @@ void block::dumpToDCT(FILE *outfile) {
 }
 
 /*
- * Use dct formatted file to fill current block
+ *
+ * Use dct formatted string to fill current block
  */
 void block::fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y) {
-
-
     /*
      * Set current block offset
+     * at this point block is current block, so just parse it
      */
     x = b_oofset_x;
     y = b_offset_y;
@@ -187,7 +187,6 @@ void block::fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset
     size_t index = 0;
     size_t temp_index=0;
     unsigned char temp[100];
-
     memset(temp,0,100);
     for (int yl = 0; yl < BDIM; yl++) {
         for (int xl = 0; xl < BDIM; xl++) {
@@ -217,6 +216,9 @@ void block::fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset
 }
 
 
+/*
+ * Apply inverse quantization
+ */
 void block::inverse_quantize(int (*quantMatrix)[8], double qscale) {
     for (int x= 0;x<BDIM;x++) {
         for (int y = 0; y < BDIM; y++) {
@@ -228,6 +230,10 @@ void block::inverse_quantize(int (*quantMatrix)[8], double qscale) {
 
 }
 
+
+/*
+ * Inverse DCT - by the book
+ */
 void block::inverse_dct() {
     double C_u = 0.0;
     double C_v = 0.0;
@@ -266,7 +272,14 @@ void block::inverse_dct() {
     return;
 }
 
+
+/*
+ * Gather current block into pgm formatted string.
+ * String must be allocated and have correct size
+ * No bounds checking is preformed at this level
+ */
 void block::gatherPGM(unsigned char *pgmContainer, size_t totalX) {
+    // Offset in the flat string
     int realIndex = 0;
     for (int yl = 0; yl <BDIM; yl++) {
         for (int xl = 0; xl < BDIM; xl++) {

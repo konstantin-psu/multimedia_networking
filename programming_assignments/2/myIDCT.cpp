@@ -30,7 +30,7 @@ int main(int args, char * argv []) {
     if (args != 4) { //Force correct number of args
         std::cout<<"Error: Invalid number of arguments\n"
                 "Usage:\n"
-                "   myIDCT <input image full path> <formatString file full path> <output file>\n";
+                "   myIDCT <.dct input file full path> <quantfile full path> <output file full path>\n";
         exit(1);
     }
     char * inputImage = argv[1];              // get rawInput file path
