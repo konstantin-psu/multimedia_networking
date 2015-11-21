@@ -66,7 +66,7 @@ void rawInput::init(size_t rawSize) {
 
 
 /*
- * Read input file
+ * Read input file (can be either PGM or DCT)
  */
 void rawInput::readInput(char *fname) {
     FILE * p = fopen(fname, "rb"); // Open file with reading permission
@@ -121,7 +121,7 @@ void rawInput::readInput(char *fname) {
     this->macroblocksY = this->yDim/16;
 
 
-    fgets(this->formatString,20,p); // Skip 255 line
+    fgets(this->formatString,20,p); // Read 255 (if PGM), or qscale if (DCT)
     size_t sz = ftell(p);
 
     size_t encodedLineSize = totSize - sz;
