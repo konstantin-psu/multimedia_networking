@@ -3,6 +3,6 @@
 dot='.gif'
 for i in *.pgm; do
     j=`basename $i .pgm`
-    pgmtoppm 1,1,1 $i | ppmtogif > ../converted/$j$dot
+    pgmtoppm 1,1,1 $i | ppmtogif > ../restoredOut/$j$dot
 done
 

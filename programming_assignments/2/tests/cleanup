@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm converted/*.gif
+rm restoredOut/*.gif
 rm dct/*.dct
 rm original_gifs/*.gif
 rm origin_pgm/*.pgm  

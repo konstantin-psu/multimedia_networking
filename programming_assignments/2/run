@@ -1,0 +1,9 @@
+#!/bin/bash
+valgrind ./myDCT tests/0/test0.pgm ./quantfile 1.0 outTest0
+valgrind ./myDCT tests/1/test1.pgm ./quantfile 1.0 outTest1
+valgrind ./myDCT tests/2/test2.pgm ./quantfile 1.0 outTest2
+valgrind ./myDCT tests/2/test2.pgm ./quantfile 3.5 outTest35
+valgrind ./myIDCT tests/0/test0.1.0.dct ./quantfile outTest0IDCT.pgm
+valgrind ./myIDCT tests/1/test1.1.0.dct ./quantfile outTest1IDCT.pgm
+valgrind ./myIDCT tests/2/test2.1.0.dct ./quantfile outTest2IDCT.pgm
+valgrind ./myIDCT tests/2/test2.3.5.dct ./quantfile outTest23_5IDCT.pgm

@@ -12,8 +12,8 @@ qscale='1.0'
 dot='.'
 cd -
 
-for top in {1..5}; do
-    for ext in {0..9}; do
+for top in 1 6; do
+    for ext in {0..1}; do
         qscale="$top.$ext"
         for i in *.pgm; do
             j=`basename $i  .pgm`

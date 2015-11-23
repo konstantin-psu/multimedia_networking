@@ -1,0 +1,1089 @@
+\documentclass{report}
+\usepackage{fullpage}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{boxedminipage}
+\usepackage{color, soul}
+
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{mystyle}{
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    captionpos=b,                    
+    numbers=left,                    
+    numbersep=5pt,                  
+}
+\lstset{
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\footnotesize\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  style=mystyle
+}
+ 
+ 
+
+ 
+\lstset{escapeinside={<@}{@>}}
+
+\usepackage{fancyvrb}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{adjustbox}
+\usepackage[shortlabels]{enumitem}
+                    \setlist[enumerate, 1]{1\textsuperscript{o}}
+
+\usepackage{verbatimbox}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{tikz}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+% allows for temporary adjustment of side margins
+\usepackage{chngpage}
+
+\newcommand{\D}[8]{
+\begin{tabular}{l}
+$D_A(#1)$\\$D_B(#2)$\\$D_C(#3)$\\$D_D(#4)$\\$D_E(#5)$\\$D_F(#6)$\\$D_G(#7)$\\$D_H(#8)$
+\end{tabular}
+}
+\newcommand{\C}[2]{$min(#1)=#2$}
+\newcommand{\N}[2]{$#2$}
+\newcommand{\G}[1]{$#1$}
+\newcommand{\I}{\infty}
+\newcommand{\hlc}[2][yellow]{ {\sethlcolor{#1} \hl{#2}} }
+
+\begin{document}
+
+\begin{lstlisting}[language=C++]
+// FILENAME: macroblockManager.h
+
+#ifndef JPEG_DCT_MACROBLOCKMANAGER_H
+#define JPEG_DCT_MACROBLOCKMANAGER_H
+#define BDIM 8
+
+#include "block.h"
+#include "macroblock.h"
+#include "rawInput.h"
+
+
+/*
+ * This is the Driver class, creates and controls structure
+ */
+class macroblockManager {
+public:
+    macroblockManager();
+    ~macroblockManager();
+    void PGMtoDCT();                     // Read pgmFileParser string and dumpToDCT it to output file
+    macroblock **macroblocks;            //  Two dimensional array of macroblocks (the only thing here that needs to be deleted
+    size_t macroBlocksX;                 // Number of macro blocks in X dim
+    size_t macroBlocksY;                 // Number of macro blocks in Y dim
+    size_t x;                            // Total X dim of the input
+    size_t y;                            // Total Y dim of the input
+
+    void transform();                    // Perform DCT transformation
+    double qscale;                       // qscale holder
+    char *outDCT;                        // location of DCT encoded file (in pgm -> dct transformation)
+    char * inDct;                        // location of DCT in file ( in dct -> pgm transformation)
+    char * outPGM;                       // location of PGM out filr (in dct -> pgm transformation)
+    unsigned char * pgmFormattedOutput;  // pgm encoded string ( used to dump pgm in dct -> pgm transofrmation)
+    char * quantFile;                    // location of quantfile
+    rawInput inputObject;                // DCT or PGM input object holder - depends on how it is invoked
+                                         // it is ok to do since DCT and PGM header are close enough.
+
+
+    int quantMatrix[BDIM][BDIM];         // quantmatrix - aquired by parsing quantfile
+
+    void setScale(char *string);         // Setter function for qscale value
+    void setOutFile(char *string);       // Setter function for outDCT
+    void parseQuantMatrix(char *string); // Read quantfile and same it into quantMatrix
+
+    void initPGM(char *inputfile, char *quantfile, char *outputfile, char *qscale); // Initialize all data required for PGM->DCT transformation
+
+    void WriteDCTheaderTo(FILE *pFILE);  // Dump DCT header into pFile
+    void WritePGMheaderTo(FILE *pFILE);  // Dump PGM header into pFile
+
+    void gatherPGMResults();             // Collect PGM
+
+    void initDct(char *inputImage, char *quantfile, char *outputfile); // Initialize data needed for DCT->PGM transformation
+
+    void DCTtoPGM(); // Convert DCT to PGM
+
+    void fillMacroblocksFromDCT();
+
+    void initMacroBlocks(rawInput *test); //
+
+    void createMacroBlock(unsigned char *dctString, size_t start, size_t anEnd); // Create macroblock from PGM
+
+    void readLine(unsigned char **src, unsigned char **dst); // Just read line, will advance src to the end of the line
+
+    void parseOffset(unsigned char *line, size_t *offset_x, size_t *offset_y); // Read offset from beginning of a block in DCT formatted string
+
+    void inverseTransofrm();
+};
+
+#endif //JPEG_DCT_MACROBLOCKMANAGER_H
+ <@\pagebreak@>
+// ******* FILENAME macroblockManager.cpp ************************
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include "macroblockManager.h"
+
+
+/*
+ * MacroblockManager implementation
+ */
+
+/*
+ * Default constructor
+ */
+macroblockManager::macroblockManager() {
+    macroblocks = NULL;
+    macroBlocksX = 0;
+    macroBlocksY = 0;
+    pgmFormattedOutput = NULL;
+}
+
+
+/*
+ * Default destructor
+ */
+macroblockManager::~macroblockManager() {
+    if (macroblocks != NULL) {
+        for (size_t i=0; i< macroBlocksX;i++) {
+            delete macroblocks[i];
+        }
+        delete macroblocks;
+    }
+    if (pgmFormattedOutput != NULL) { delete pgmFormattedOutput;}
+}
+
+/*
+ * Read pgm and dumpToDCT DCT
+ */
+void macroblockManager::PGMtoDCT() {
+    macroBlocksX = inputObject.macroblocksX;
+    macroBlocksY = inputObject.macroblocksY;
+    x = inputObject.xDim;
+    y = inputObject.yDim;
+    initMacroBlocks(&inputObject);
+    for (size_t i =0; i < inputObject.macroblocksY; i++) {
+        for (size_t j =0; j < inputObject.macroblocksX; j++) {
+            macroblocks[j][i].parse(&inputObject, j,i, x); // Let each macroblock to parsePGM it's own part
+        }
+
+    }
+    transform();
+    return;
+}
+
+/*
+ * Allocate macroblocks
+ */
+
+void macroblockManager::initMacroBlocks(rawInput *test) {
+    this->macroblocks = new macroblock * [test->macroblocksX];
+    for (size_t i = 0;i< test->macroblocksX;i++) {
+        macroblocks[i] = new macroblock [test->macroblocksY];
+    }
+}
+
+/*
+ * Transform and dumpToDCT
+ */
+void macroblockManager::transform() {
+    FILE * out = fopen(outDCT, "w"); // Open out file with write permissions (file will be overwritten)
+    WriteDCTheaderTo(out);
+    if (outDCT == NULL) {
+        printf("Failed to open %s\n", outDCT);
+        exit(1);
+    }
+    for (size_t i = 0;i < macroBlocksY;i++) {
+        for (size_t j = 0;j < macroBlocksX;j++) {
+            macroblocks[j][i].transform(quantMatrix, qscale); // Make each macrobock to transform itself
+            macroblocks[j][i].dump(out); // Make each macrobock to dumpToDCT itself
+        }
+    }
+    fclose(out);
+
+    return;
+}
+
+/*
+ * Setters
+ */
+void macroblockManager::setScale(char *string) { qscale =atof(string); }
+void macroblockManager::setOutFile(char *string) { outDCT = string; }
+
+/*
+ * Parse quantfile
+ */
+void macroblockManager::parseQuantMatrix(char *string) {
+    FILE * p = fopen(string, "r");
+    if (p == NULL) {
+        printf("Failed to open %s\n", string);
+        exit(1);
+    }
+
+    size_t lineSize = 1000;
+    size_t charSize = 100;
+    char line [lineSize]; // Templine
+    char qs [charSize]; // Temp char (100 symbols is overkill but whatever)
+    memset(qs,0,charSize);
+
+    int count = 0;
+    int row = 0;
+    int col = 0;
+
+    // loop through each line in quantfile, skip spaces and save values
+    while(fgets(line, lineSize, p) != NULL) { //read
+        size_t i = 0;
+        for (i = 0; i< lineSize; i++ ) {
+            if (line[i] == 10) { // End of line - break;
+                if (strlen(qs) != 0) {
+                    quantMatrix[row][col] = atoi(qs); // set entry in the matrix
+                }
+                memset(qs,0,charSize);
+                count=0;
+                col=0;
+                break;
+            } else if (line[i] == 32) { // Search for space
+                if (strlen(qs) == 0) {continue;}
+                else {
+                    quantMatrix[row][col] = atoi(qs); // set entry in the matrix
+                    memset(qs,0,100);
+                    count=0;
+                    col++;
+                }
+            } else {
+                qs[count] = line[i];
+                count++;
+            }
+        }
+        row++;
+    }
+    if (row >8 || col > 8) {
+        std::cout<<"Error: quantfile expected to have 8 columns and 8 rows\n";
+        exit(1);
+    }
+    fclose(p);
+}
+
+/*
+ * Initialize object
+ */
+void macroblockManager::initPGM(char *inputfile, char *quantfile, char *outputfile, char *qscale) {
+    setScale(qscale);
+    parseQuantMatrix(quantfile);
+    setOutFile(outputfile);
+    inputObject.readInput(inputfile);
+}
+
+/*
+ * Dump dct header
+ */
+void macroblockManager::WriteDCTheaderTo(FILE *pFILE) {
+    fprintf(pFILE, "%s\n", "MYDCT");
+    fprintf(pFILE, "%lu %lu\n", x, y);
+    fprintf(pFILE, "%f\n", qscale);
+}
+
+/*
+ * Dump pgm header
+ */
+void macroblockManager::WritePGMheaderTo(FILE *pFILE) {
+    fprintf(pFILE, "%s\n", "P5");
+    fprintf(pFILE, "%lu %lu\n", x, y);
+    fprintf(pFILE, "%d\n", 255);
+}
+
+/*
+ * Save arguments withinthis object
+ */
+void macroblockManager::initDct(char *inputImage, char *quantfile, char *outputfile) {
+    inDct = inputImage;
+    this->quantFile = quantfile;
+    this->outPGM = outputfile;
+}
+
+
+/*
+ * Convert DCT fromatted file back to PGM
+ */
+void macroblockManager::DCTtoPGM() {
+    parseQuantMatrix(quantFile);  // Parse quantfile
+    inputObject.readInput(inDct); // Read DCT file
+    macroBlocksX = inputObject.macroblocksX; // Save number of macroblocks
+    macroBlocksY = inputObject.macroblocksY;
+    x = inputObject.xDim; // Save total dimensions of the picture
+    y = inputObject.yDim;
+    qscale = atof(inputObject.formatString); // fetch qscale
+    fillMacroblocksFromDCT(); // Parse dct formatted string into macroblocks
+    inverseTransofrm(); // inverse transform each macroblock
+    return;
+}
+
+/*
+ * Fill each macroblock from dct formatted string (block by block)
+ *
+ * Find next block start position, and end position, and fill corresponding macroblock
+ */
+void macroblockManager::fillMacroblocksFromDCT() {
+    unsigned char * dctString = inputObject.rawString;
+
+    size_t mBlock_start = 0;
+    size_t mBlock_end = 0;
+    initMacroBlocks(&inputObject);
+    pgmFormattedOutput = new unsigned char[macroBlocksX * macroBlocksY * 16 * 16 + 1];
+    memset(pgmFormattedOutput,0,macroBlocksX * macroBlocksY * 16 * 16 + 1);
+    size_t count = 0;
+
+    for (size_t pos = 0; pos < inputObject.rawStringSize; pos++) {
+        if (dctString[pos] == 0) { break;} // EOF
+        else if (dctString[pos] == 10) { // Breakline (can be inside a block, need to check
+            if (count == 8) { // Block end
+
+                mBlock_end = pos; // remember data
+                createMacroBlock(dctString, mBlock_start, mBlock_end);
+                mBlock_start = pos + 1; // skip new line
+                count = 0;
+            } else {
+                count++;
+            }
+        }
+
+    }
+}
+
+
+/*
+ * Create (if needed) and add data to a macroblock
+ */
+void macroblockManager::createMacroBlock(unsigned char *dctString, size_t start, size_t anEnd) {
+    unsigned char * cblock = dctString+start;
+    unsigned char * line = new unsigned char[500];
+    memset(line, 0, 500);
+    size_t offset_x = 0;
+    size_t offset_y = 0;
+    // Each block in dct file starts with block position - fetch that line
+    readLine(&cblock, &line);
+
+    // Get block position
+    parseOffset(line, &offset_x, &offset_y);
+
+    // Get macroblock positions (index)
+    size_t macroblock_offset_x = offset_x/16;
+    size_t macroblock_offset_y = offset_y/16;
+
+    // Add cblock to that macroblock
+    macroblocks[macroblock_offset_x][macroblock_offset_y].fill_blockFromDCT(cblock, offset_x, offset_y);
+    delete(line);
+}
+
+// Just read one line from a string
+void macroblockManager::readLine(unsigned char **src, unsigned char **dst) {
+
+    int index = 0;
+    unsigned char t;
+    while((*src)[index] != '\n'){ //loop until new line
+        t = (*src)[index];
+        (*dst)[index] =t;
+        index ++;
+    }
+    *src = *src + index + 1; // advance string passed new line
+}
+
+
+// Fetch block offsets
+void macroblockManager::parseOffset(unsigned char *line, size_t *offset_x, size_t *offset_y) {
+    size_t i = 0;
+    size_t j = 0;
+    char temp [100];
+    memset(temp,0,100);
+    while(line[i]==32) { // skip spaces
+        i++;
+    }
+    while(line[i]!=32) { // read offset x
+        temp[j] = line[i];
+        i++;
+        j++;
+    }
+    (*offset_x) = atoi(temp); // save offset x
+    j=0;
+    memset(temp,0,100); // reset temp storage
+    while(line[i]==32) { // sckip spaces
+        i++;
+    }
+    while(line[i]!=0) { // read offset y
+        temp[j] = line[i];
+        i++;
+        j++;
+    }
+    (*offset_y) = atoi(temp); // save offset y
+
+}
+
+
+/*
+ * Transform each macroblock after it was filled
+ */
+void macroblockManager::inverseTransofrm() {
+    // Loop through each macroblock
+    for (size_t i = 0;i < macroBlocksY;i++) {
+        for (size_t j = 0;j < macroBlocksX;j++) {
+            macroblocks[j][i].inverse_transform(quantMatrix, qscale); // Make each macrobock to transform itself
+        }
+    }
+
+    // Gather pgm data after each macraoblock was inverted
+    gatherPGMResults();
+    return;
+
+}
+
+/*
+ * Save each macroblock into pgm encoded file
+ */
+void macroblockManager::gatherPGMResults() {
+
+    // loop through each macroblock and gather data
+    for (size_t i = 0;i < macroBlocksY;i++) {
+        for (size_t j = 0;j < macroBlocksX;j++) {
+            macroblocks[j][i].gatherPGMtoString(pgmFormattedOutput, x);
+        }
+    }
+
+    // open file for binary write
+    FILE * out = fopen(outPGM, "wb"); // Open out file with write permissions (file will be overwritten)
+    // dump header
+    WritePGMheaderTo(out);
+
+    // dump pgmFormatted output
+    fwrite(pgmFormattedOutput, macroBlocksX * macroBlocksY * 16 * 16,1,out);
+    fclose(out);
+
+    return;
+}
+<@\pagebreak@>
+// ******** FILENAME macroblock.h ******************
+
+#ifndef JPEG_DCT_MACROBLOCK_H
+#define JPEG_DCT_MACROBLOCK_H
+#define BLOCKS_DIM 2
+#define BLOCK_SIZE 8
+
+#include <iostream>
+#include "block.h"
+
+/*
+ * Representation of a single macroblock
+ */
+class macroblock {
+public:
+    block blocks [BLOCKS_DIM][BLOCKS_DIM]; // Each macroblock has fixed number of blocks
+    void transform(int qmatrix [BLOCK_SIZE][BLOCK_SIZE], double); // transoform will apply rawInput, quantmatrix, and zigzag
+    void dump(FILE *outfile); // dumpToDCT content to outDCT
+    void parse(rawInput *pEncoded, size_t i, size_t i1, size_t max_x); // Parse corresponding pgm encoded string
+
+    size_t offset_x; // Macroblock offset in X dim
+    size_t offset_y; // Macroblock offset in Y dim
+
+    void fill_blockFromDCT(unsigned char *block, size_t b_offset_x, size_t b_offset_y); // Fill on of the block from DCT encoded string
+
+    void inverse_transform(int quantMarix[8][8], double qscale); // Inverse transform each block in this macroblock
+
+    void gatherPGMtoString(unsigned char *pgmOutPutContainer, size_t totalX); // Gather pgm Encoded string from each block
+};
+
+#endif //JPEG_DCT_MACROBLOCK_H
+ <@\pagebreak@>
+// ******** FILENAME macroblock.cpp ******************
+
+#include <string.h>
+#include "macroblock.h"
+#define MBLOCKSIZE 16
+
+
+/*
+ * Perform transofrmation on each block
+ */
+void macroblock::transform(int quantMatrix [BLOCK_SIZE][BLOCK_SIZE], double qscale) {
+    for (int y = 0; y < BLOCKS_DIM; y++) {
+        for (int x = 0; x < BLOCKS_DIM; x++) {
+            blocks[x][y].dct();
+            blocks[x][y].quantize(quantMatrix, qscale);
+            blocks[x][y].zigzag(false);
+        }
+    }
+    return;
+}
+
+/*
+ * parsePGM pgm
+ * mb_id_x - index x as index of double array of macroblocks in macroblocks manager
+ * mb_id_y - index y as index of double array of macroblocks in macroblocks manager
+ * max_x   - total x size of the pgm
+ */
+void macroblock::parse(rawInput *pEncoded, size_t mb_ind_x, size_t mb_ind_y, size_t max_x) {
+    offset_x = mb_ind_x * MBLOCKSIZE; // Calculate real x offset
+    offset_y = mb_ind_y * MBLOCKSIZE; // Calculate real y offset
+
+    for (int y = 0; y < BLOCKS_DIM; y++) {
+        for (int x = 0; x < BLOCKS_DIM; x++) {
+            blocks[x][y].parsePGM(pEncoded, offset_x, offset_y, x, y, max_x); // Let each block parsePGM its part.
+        }
+    }
+}
+
+/*
+ * Dump rawInput encoded input.
+ */
+void macroblock::dump(FILE *outfile) {
+    for (int y = 0; y < BLOCKS_DIM; y++) {
+        for (int x = 0; x < BLOCKS_DIM; x++) {
+            blocks[x][y].dumpToDCT(outfile); // Let each block dumpToDCT its part.
+        }
+    }
+}
+
+/*
+ * Fill block with b_offest_x, and b_offset_y
+ */
+void macroblock::fill_blockFromDCT(unsigned char *block, size_t b_offset_x, size_t b_offset_y) {
+    /*
+     * Need to figure out and save this macroblock offset
+     * and corresponding block index, since block offset is passed as real offset
+     */
+    // 1. Find and save this macroblock offset
+    size_t mb_ind_x = b_offset_x/16;
+    size_t mb_ind_y = b_offset_y/16;
+    size_t mb_offset_x =mb_ind_x * 16;
+    size_t mb_offset_y =mb_ind_y * 16;
+    this->offset_x = mb_offset_x;
+    this->offset_y = mb_offset_y;
+    // 2. Find corresponding block index and fill it
+    size_t b_ind_x = (b_offset_x - mb_offset_x)/8;
+    size_t b_ind_y = (b_offset_y - mb_offset_y)/8;
+    blocks[b_ind_x][b_ind_y].fillFromDCT(block, b_offset_x, b_offset_y);
+}
+
+
+/*
+ * Inverse transform each block in this macroblock
+ */
+void macroblock::inverse_transform(int quantMatrix[8][8], double qscale) {
+    // Just loop through each block and apply required steps - reversed zigzag, quantize, dct
+    bool inversed = true;
+    for (int y = 0; y < BLOCKS_DIM; y++) {
+        for (int x = 0; x < BLOCKS_DIM; x++) {
+            blocks[x][y].zigzag(inversed);
+            blocks[x][y].inverse_quantize(quantMatrix, qscale);
+            blocks[x][y].inverse_dct();
+        }
+    }
+    return;
+
+}
+
+
+/*
+ * Gather pgm from each block in this macroblock
+ */
+void macroblock::gatherPGMtoString(unsigned char *pgmOutPutContainer, size_t totalX) {
+    // loop through each block, and fetch pgm encoded data
+    for (int y = 0; y < BLOCKS_DIM; y++) {
+        for (int x = 0; x < BLOCKS_DIM; x++) {
+            blocks[x][y].gatherPGM(pgmOutPutContainer, totalX);
+        }
+    }
+    return;
+}
+ <@\pagebreak@>
+// ******** FILENAME block.h ******************
+
+#ifndef JPEG_DCT_BLOCK_H
+#define JPEG_DCT_BLOCK_H
+
+#include <stddef.h>
+#include <stdio.h>
+#include "rawInput.h"
+
+
+/*
+ * This class is representing 8x8 block
+ */
+class block {
+public:
+    block(); // Default constructor
+    void dct(); // Dct transform itself
+    void zigzag(bool inversed); // Zig zag transform itself
+    void setIndex(size_t x, size_t y); // Set offset
+    unsigned char items [8][8]; // Raw items in pgm
+    double transofrmed [8][8];  // DCT transformed items
+    int quantized [8][8];       // Quantized items
+    int reordered [8][8];       // Reordered items
+    //Could use only one array to save space -- easier this way, though less efficient.
+
+    size_t x; // Real offset in x
+    size_t y; // Real offset in y
+
+    void quantize(int qmatrix[8][8], double qscale); // Apply qmatrix and qscale to this block
+    void parsePGM(rawInput *pEncoded, size_t i, size_t i1, int i2, int i3, size_t total_x); // parse pgm formatted string
+    void dumpToDCT(FILE *outfile); // Dump this block to outfile in dct format
+
+    void fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y); // parse dct formatted string
+
+    void inverse_quantize(int quantMatrix[8][8], double qscale); // Reverse quantization
+
+    void inverse_dct(); // Inverse dct
+
+    void gatherPGM(unsigned char *pgmContainer, size_t totalX);// Dump this block in pgm format into pgm formatted string
+};
+
+#endif //JPEG_DCT_BLOCK_H
+ <@\pagebreak@>
+// ******** FILENAME block.cpp ******************
+
+#include "block.h"
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define BDIM 8
+
+/*
+ * Implementation of the block class
+ */
+
+/*
+ * Default constructor - just set everything to 0
+ */
+block::block() {
+    for (int i = 0; i < BDIM;i++) {
+        for (int j = 0;j< BDIM;j++) {
+            items[i][j]=0;
+            transofrmed[i][j]=0;
+            reordered[i][j]=0;
+        }
+    }
+    x = 0;
+    y = 0;
+}
+
+/*
+ * Offset setter
+ */
+void block::setIndex(size_t x, size_t y) {
+    this->x = x;
+    this->y = y;
+}
+
+
+/*
+ * Dct transform (Just apply the given formula, without optimizations
+ */
+void block::dct() {
+    double C_u = 0.0;
+    double C_v = 0.0;
+    double sqr = 1.0/sqrt(2.0);
+    double coef = 0.0;
+
+    for (int v = 0 ; v < BDIM; v++) {
+            if (v == 0) {
+                C_v = sqr;
+            } else {
+                C_v = 1.0;
+            }
+        for (int u = 0 ; u < BDIM; u++) {
+            if (u == 0) {
+                C_u = sqr;
+            } else {
+                C_u = 1.0;
+            }
+            coef = (C_u/2.0)  * (C_v/2.0);
+            double sum = 0;
+            for (int y = 0; y < BDIM; y++) {
+                for (int x = 0; x < BDIM; x++) {
+                    sum += (double)items[x][y]*cos(((double)(2* x +1)*(double) u *M_PI)/16.0)*cos(((double)(2* y +1)*(double) v *M_PI)/16.0);
+                }
+            }
+            transofrmed[u][v] = coef * sum;
+        }
+    }
+    return;
+}
+
+/*
+ * Zigzag reorder
+ *  if inversed true - then inversed prcess applied
+ */
+void block::zigzag(bool inversed) {
+    int m = 8;
+    int y =0, x =0;
+    int c =0, r =0; //row and column
+    int res=0;
+    int n = 0;
+    for (int i = 0; i < m * 2; i++) {
+        for (int j = (i < m) ? 0 : i - m + 1; j <= i && j < m; j++) {
+            y = n / 8;
+            x = n - y * 8;
+            n++;
+            res = (i & 1) ? j * (m - 1) + i : (i - j) * m + j;
+            c = res / 8;
+            r = res - c * 8;
+            inversed ? quantized[r][c] = reordered[x][y] : reordered[x][y] = quantized[r][c];
+        }
+    }
+}
+
+/*
+ * Quantize the transformed array
+ */
+void block::quantize(int qmatrix [8][8], double qscale) {
+    // quantize each element of the DCT transformed array
+    for (int x= 0;x<BDIM;x++) {
+        for (int y= 0;y<BDIM;y++) {
+            int val = (int)round( transofrmed[y][x] / ((double)qmatrix[x][y]*qscale)); // apply qmatrix and qscale and round
+            if (val < -127) {
+                val = -127;
+            } else if (val > 128) {
+                val = 128;
+            }
+            val +=127;
+            quantized[y][x] = val; //save quantized value
+        }
+    }
+}
+
+
+/*
+ * parsePGM pgm formatted string into double array, and further on transform to DCT
+ */
+void block::parsePGM(rawInput *pEncoded, size_t macroblock_offset_x, size_t macroblock_offset_y,
+                     int block_offset_x, int block_offset_y, size_t total_x) {
+
+
+    // Set current block real offset
+    setIndex(macroblock_offset_x + block_offset_x*BDIM, macroblock_offset_y + block_offset_y*BDIM);
+
+    size_t index=0;
+    size_t loc_x = 0;
+    size_t loc_y = 0;
+    // Need to translate two dimensional indexes to flat index of pgm file
+    for (size_t row = 0; row < BDIM; row++) {
+        // y location
+        loc_y = (y + row) * total_x;
+        for (size_t column = 0; column < BDIM; column++) {
+            // x location
+            loc_x = x + column;
+            // location in the PGM input
+            index = loc_x + loc_y;
+            items[column][row] = pEncoded->rawString[index];
+        }
+    }
+}
+
+
+/*
+ * Save this block to provided DCT output file (used in pgm -> DCT)
+ */
+void block::dumpToDCT(FILE *outfile) {
+    fprintf(outfile, "%lu %lu\n", x, y);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            fprintf(outfile, "%5d", reordered[j][i]);
+        }
+        fprintf(outfile, "\n");
+    }
+}
+
+/*
+ *
+ * Use dct formatted string to fill current block
+ */
+void block::fillFromDCT(unsigned char *block, size_t b_oofset_x, size_t b_offset_y) {
+    /*
+     * Set current block offset
+     * at this point block is current block, so just parse it
+     */
+    x = b_oofset_x;
+    y = b_offset_y;
+
+    size_t index = 0;
+    size_t temp_index=0;
+    unsigned char temp[100];
+    memset(temp,0,100);
+    for (int yl = 0; yl < BDIM; yl++) {
+        for (int xl = 0; xl < BDIM; xl++) {
+            while(block[index] != 10) {
+                if (block[index] != 32) {
+                    temp[temp_index] = block[index];
+                    temp_index++;
+                } else {
+                    if (temp_index != 0) {
+                        reordered[xl][yl] = atoi((char *)temp);
+                        memset(temp,0,100);
+                        temp_index = 0;
+                        break;
+                    }
+                    temp_index = 0;
+                }
+                index++;
+            }
+            if (temp_index != 0) {
+                reordered[xl][yl] = atoi((char *)temp);
+                memset(temp,0,100);
+                temp_index = 0;
+            }
+            index++;
+        }
+    }
+}
+
+
+/*
+ * Apply inverse quantization
+ */
+void block::inverse_quantize(int (*quantMatrix)[8], double qscale) {
+    for (int x= 0;x<BDIM;x++) {
+        for (int y = 0; y < BDIM; y++) {
+            double val = (double) (quantized[y][x] - 127);
+            val = val * ((double) quantMatrix[x][y] * qscale);
+            transofrmed[y][x] = val;
+        }
+    }
+
+}
+
+
+/*
+ * Inverse DCT - by the book
+ */
+void block::inverse_dct() {
+    double C_u = 0.0;
+    double C_v = 0.0;
+    double sqr = 1.0/sqrt(2.0);
+    double coef = 0.0;
+
+    for (int y = 0 ; y < BDIM; y++) {
+        for (int x = 0 ; x < BDIM; x++) {
+            double sum = 0;
+            for (int u = 0; u< BDIM; u++) {
+                if (u == 0) {
+                    C_u = sqr;
+                } else {
+                    C_u = 1.0;
+                }
+                for (int v = 0; v< BDIM; v++) {
+                    if (v == 0) {
+                        C_v = sqr;
+                    } else {
+                        C_v = 1.0;
+                    }
+                    coef = C_u * C_v;
+                    sum += coef * transofrmed[v][u] *cos(((double)(2* y +1)*(double)u*M_PI)/16.0)*cos(((double)(2* x +1)*(double)v*M_PI)/16.0);
+                }
+
+            }
+            sum = sum/4.0;
+            if (sum < 0) {
+                sum = 0;
+            } else if (sum > 255) {
+                sum = 255;
+            }
+            items[x][y] = (unsigned char)sum;
+        }
+    }
+    return;
+}
+
+
+/*
+ * Gather current block into pgm formatted string.
+ * String must be allocated and have correct size
+ * No bounds checking is preformed at this level
+ */
+void block::gatherPGM(unsigned char *pgmContainer, size_t totalX) {
+    // Offset in the flat string
+    int realIndex = 0;
+    for (int yl = 0; yl <BDIM; yl++) {
+        for (int xl = 0; xl < BDIM; xl++) {
+            realIndex = xl + x + (y + yl) *totalX;
+            pgmContainer[realIndex] = items[xl][yl];
+        }
+    }
+}
+ <@\pagebreak@>
+// ******** FILENAME rawInput.h ******************
+
+#ifndef DCT_DCTENCODED_H
+#define DCT_DCTENCODED_H
+
+#include <glob.h>
+
+// This class represent rawInput encoded file.
+class rawInput {
+public:
+
+    rawInput();
+
+    ~rawInput();
+
+    void init(size_t rawSize);
+    void readInput(char *fname);
+
+    size_t xDim; // x dimension retrieved from header
+    size_t yDim; // y dimension retrieved from header
+    //
+    char header [20];   // Header
+    char formatString[20]; //  qscale or 255 - depends on the file we are reading
+    unsigned char * rawString; // Encoded String - body of the file
+
+    size_t rawStringSize; // Encoded String size
+    size_t macroblocksX; // Number of macroblocks in y dimension
+    size_t macroblocksY; // Number of macroblocks in x dimension
+};
+
+#endif //DCT_DCTENCODED_H
+ <@\pagebreak@>
+// ******** FILENAME rawInput.cpp ******************
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include "rawInput.h"
+
+/*
+ * implementation of rawInput class
+ */
+
+/*
+ * Default constructor
+ * Set everything to 0
+ */
+rawInput::rawInput() {
+    memset(this->formatString,0,20);
+    memset(this->header,0,20);
+    this->xDim = 0;
+    this->yDim = 0;
+
+    this->rawStringSize =0;
+
+    this->macroblocksX = 0;
+    this->macroblocksY = 0;
+    this->rawString = NULL;
+}
+
+/*
+ * Default destructor
+ * rawString is the only thing needs to be cleaned up
+ */
+rawInput::~rawInput() {
+    if (this->rawString != NULL) {
+        free(this->rawString);
+    }
+}
+
+/*
+ * Allocate rawString
+ */
+void rawInput::init(size_t rawSize) {
+    this->rawString = (unsigned char*) malloc(rawSize);
+    memset(this->rawString, 0, rawSize);
+}
+
+
+/*
+ * Read input file (can be either PGM or DCT)
+ */
+void rawInput::readInput(char *fname) {
+    FILE * p = fopen(fname, "rb"); // Open file with reading permission
+    if (p == NULL) {
+        printf("Failed to open %s\n", fname);
+        exit(1);
+    }
+
+    // Figure out total size of the file;
+    fseek(p, 0L, SEEK_END);
+    size_t totSize = ftell(p);
+    fseek(p, 0L, SEEK_SET);
+
+    init(totSize);
+
+    char line [100];   // Temp string
+    memset(line, 0, 100);
+    fgets(this->header,20,p); // Read header
+    fgets(line,100,p); // Read dimensions
+    char dim[100];
+    memset(dim, 0, 100);
+
+    int dimInd = 0;
+    int dimI = 0;
+    while(line[dimInd] == 32) {
+        dimInd++;
+    }
+    while(line[dimInd] != 32) {
+        dim[dimI] = line[dimInd];
+        dimI++;
+        dimInd++;
+    }
+    dimI=0;
+    this->xDim = atoi(dim);
+    memset(dim, 0, 100);
+
+    while(line[dimInd] == 32) {
+        dimInd++;
+    }
+    while(line[dimInd] != 10) {
+        dim[dimI] = line[dimInd];
+        dimI++;
+        dimInd++;
+    }
+    this->yDim = atoi(dim);
+
+    if (xDim % 16 != 0 || yDim % 16 != 0)  {
+        std::cout<<"Error, input file dimensions expected to be divisible by 16\n";
+        exit(1);
+    }
+    this->macroblocksX = this->xDim/16; // Calculate number of macroblocks
+    this->macroblocksY = this->yDim/16;
+
+
+    fgets(this->formatString,20,p); // Read 255 (if PGM), or qscale if (DCT)
+    size_t sz = ftell(p);
+
+    size_t encodedLineSize = totSize - sz;
+    fread(this->rawString, encodedLineSize, 1, p); // Read encoded part in binary.
+    this->rawStringSize = encodedLineSize;
+    fclose(p);  // Don't forget to close the input file.
+}
+\end{lstlisting}
+\end{document}
