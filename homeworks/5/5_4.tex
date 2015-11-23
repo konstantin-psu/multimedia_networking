@@ -1,0 +1,245 @@
+\documentclass{article}
+
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumerate}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{forest}
+\usepackage[shortlabels]{enumitem}
+     \setlist[enumerate, 1]{1\textsuperscript{o}}
+\lstset { %
+    language=C++,
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+}
+
+%\usetikzlibrary{automata,positioning}
+\usetikzlibrary{positioning,shapes,shadows,arrows,automata}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{(\hmwkClassInstructor\ \hmwkClassTime): \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+%
+% Create Problem Sections
+%
+
+\newcommand{\enterProblemHeader}[1]{
+    \nobreak\extramarks{}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+}
+
+\newcommand{\exitProblemHeader}[1]{
+    \nobreak\extramarks{Problem \arabic{#1} (continued)}{Problem \arabic{#1} continued on next page\ldots}\nobreak{}
+    \stepcounter{#1}
+    \nobreak\extramarks{Problem \arabic{#1}}{}\nobreak{}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Problem Environment
+%
+% This environment takes an optional argument. When given, it will adjust the
+% problem counter. This is useful for when the problems given for your
+% assignment aren't sequential. See the last 3 problems of this template for an
+% example.
+%
+\newenvironment{homeworkProblem}[1][-1]{
+    \ifnum#1>0
+        \setcounter{homeworkProblemCounter}{#1}
+    \fi
+    \section{Problem \arabic{homeworkProblemCounter}}
+    \setcounter{partCounter}{1}
+    \enterProblemHeader{homeworkProblemCounter}
+}{
+    \exitProblemHeader{homeworkProblemCounter}
+}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Homework\ \#5}
+\newcommand{\hmwkDueDate}{November 23, 2015}
+\newcommand{\hmwkClass}{CS510 Intro to Multimedia Networking}
+\newcommand{\hmwkClassTime}{Fall 2015}
+\newcommand{\hmwkClassInstructor}{Wu-chi Feng}
+\newcommand{\hmwkAuthorName}{Konstantin Macarenco}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate\ at 8:00am}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+    \vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+% For derivatives
+\newcommand{\deriv}[1]{\frac{\mathrm{d}}{\mathrm{d}x} (#1)}
+
+% For partial derivatives
+\newcommand{\pderiv}[2]{\frac{\partial}{\partial #1} (#2)}
+
+% Integral dx
+\newcommand{\dx}{\mathrm{d}x}
+
+% Alias for the Solution section header
+\newcommand{\solution}{\textbf{\large Solution}}
+
+% Probability commands: Expectation, Variance, Covariance, Bias
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Bias}{\mathrm{Bias}}
+
+\begin{document}
+
+\maketitle
+
+\pagebreak
+
+%\begin{enumerate}[(a), leftmargin = 0.7cm, nosep]
+\begin{homeworkProblem}
+Suppose we have a number of tasks that we need to run in a real-time system using the
+Rate Monotonic Scheduling algorithm with the following requirements:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{c|c|c}
+$\tau_i$ & $T_i$ & $C_i$ \\ \hline
+1 & 10 &  1\\ \hline
+2 & 30 &  2\\ \hline
+3 & 25 &  2\\ \hline
+4 & 8 &  1\\ \hline
+5 & 15 &  2\\
+\end{tabular}
+\end{table}
+
+Is this task set feasible? If it is, what priorities should be assigned to the tasks (label
+the highest and lowest priority).
+
+$$U_{proc} = \sum_{i=0}^{m}\cfrac{C_i}{T_i} = \cfrac{1}{10}+\cfrac{2}{30}+\cfrac{2}{25}+\cfrac{1}{8}+\cfrac{2}{15} = 0.505$$
+$$U_{theoretical} = m(2^{1/m} - 1) = 4\times(2^{1/4} - 1)= 0.75682846$$
+%$$U_{theoretical} = m(2^{1/m} - 1) = 5\times(2^{1/5} - 1)= 0.743491775$$
+
+Since $U_{proc} < U_{theoretical}$ this set of tasks is feasible. It is also sufficient to check if $U_{proc} < 0.69$, which holds true.\\
+Tasks can be assigned following priorities, where 1 is highest and 5 is lowest:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{c|c|c|c}
+$\tau_i$ & $T_i$ & $C_i$ & Priority \\ \hline
+1 & 10 &  1 & 2\\ \hline
+2 & 30 &  2 & 5\\ \hline
+3 & 25 &  2 & 4\\ \hline
+4 & 8 &  1  & 1\\ \hline
+5 & 15 &  2 & 3\\
+\end{tabular}
+\end{table}
+
+
+
+
+%\begin{enumerate}[1), leftmargin = 0.9cm, nosep]
+%\end{enumerate}
+
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+
+Using Wikipedia, look up IPv4, UDP, and RTP packet header formats. A source is
+sending an RTP packet across the network…
+
+\begin{enumerate}[(a), leftmargin = 0.7cm, nosep]
+\item What additional information does UDP add to the IP packet?\\
+    In addition to IP UDP adds: source port, destination port, length and checksum.
+\item What additional information does RTP add to the UDP packet (only include fields with > 1 bits)?\\
+    In addition to UDP RTP adds Version, CC (CSRC count), PT (Payload Type), Sequence number, Timestamp, SSRC identifier, CSRC identifiers, Profile-Specific estension header ID, Extension header length, Extension Header.\\
+    Fields explanation from wikipedia:\\
+\begin{enumerate}[(1), leftmargin = 0.7cm, nosep]
+\item Version: (2 bits) Indicates the version of the protocol. Current version is 2.
+\item CC (CSRC count): (4 bits) Contains the number of CSRC identifiers (defined below) that follow the fixed header.
+\item PT (Payload type): (7 bits) Indicates the format of the payload and determines its interpretation by the application. This is specified by an RTP profile. For example, see RTP Profile for audio and video conferences with minimal control (RFC 3551).
+\item Sequence number: (16 bits) The sequence number is incremented by one for each RTP data packet sent and is to be used by the receiver to detect packet loss and to restore packet sequence. The RTP does not specify any action on packet loss; it is left to the application to take appropriate action. For example, video applications may play the last known frame in place of the missing frame. According to RFC 3550, the initial value of the sequence number should be random to make known-plaintext attacks on encryption more difficult. RTP provides no guarantee of delivery, but the presence of sequence numbers makes it possible to detect missing packets.
+\item Timestamp: (32 bits) Used to enable the receiver to play back the received samples at appropriate intervals. When several media streams are present, the timestamps are independent in each stream, and may not be relied upon for media synchronization. The granularity of the timing is application specific. For example, an audio application that samples data once every 125 µs (8 kHz, a common sample rate in digital telephony) would use that value as its clock resolution. The clock granularity is one of the details that is specified in the RTP profile for an application.
+\item SSRC: (32 bits) Synchronization source identifier uniquely identifies the source of a stream. The synchronization sources within the same RTP session will be unique.
+\item CSRC: (32 bits each) Contributing source IDs enumerate contributing sources to a stream which has been generated from multiple sources.
+\item Header extension: (optional) The first 32-bit word contains a profile-specific identifier (16 bits) and a length specifier (16 bits) that indicates the length of the extension (EHL = extension header length) in 32-bit units, excluding the 32 bits of the extension header.\\
+\end{enumerate}
+
+\item What order do the IPv4, UDP, and RTP packets occur in?\\
+
+\setlength{\unitlength}{1mm}
+\begin{picture}(20,5)
+\put(0,-15){\framebox(150,15)[l]{X}}
+\put(20,-14){\framebox(127,13)[l]{Y}}
+\put(40,-13){\framebox(30,11)[l]{Z}}
+\put(70,-13){\framebox(69,11){Video DATA}}
+\end{picture}\\
+
+\vspace{2cm}
+X=IP\\
+Y=UDP\\
+Z=RTP\\
+\end{enumerate}
+
+
+\end{homeworkProblem}
+
+\end{document}
